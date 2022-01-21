@@ -1,7 +1,7 @@
 # V3UnityFontReader
 W.I.P. font "reader" for the Danganronpa V3 Unity-based ports.
 
-This tool is licensed under the ISC License (https://github.com/IndacoSub/V3UnityFontReader/LICENSE)
+This tool is licensed under the ISC License (https://github.com/IndacoSub/V3UnityFontReader/blob/main/LICENSE)
 
 # Usage
 You'll first need to extract the Texture2D (.png) and the MonoBehaviour (.txt) of the fonts you want to "read".
