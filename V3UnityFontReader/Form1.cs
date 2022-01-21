@@ -46,6 +46,78 @@ namespace V3UnityFontReader
             pictureBox1.Refresh();
         }
 
+        void ReplaceAllGlyphs()
+        {
+            if (!loaded_png || !loaded_txt)
+            {
+                return;
+            }
+            pictureBox1.Image = new Bitmap(png_fn);
+            cur_index = 0;
+
+            /*
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                g.Clear(Color.Transparent);
+            }
+            pictureBox1.Refresh();
+            */
+
+            for (int j = 0; j < font.m_GlyphTable.Count; j++)
+            {
+                rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+                ReplaceGlyph();
+                IncreaseIndex();
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
+        void ReplaceGlyph()
+        {
+            if (rectangle.Width == 0 || rectangle.Height == 0)
+            {
+                return;
+            }
+
+            int index = font.m_GlyphTable[cur_index].m_Index;
+            string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
+            if(!Directory.Exists(ext))
+            {
+                MessageBox.Show(ext, "Extracted files folder not found!");
+                return;
+            }
+            string extfile = Path.Combine(ext, Path.GetFileNameWithoutExtension(txt_fn));
+            if(!Directory.Exists(extfile))
+            {
+                MessageBox.Show(extfile, "This file hasn't been extracted yet!");
+                return;
+            }
+            string partial = Path.Combine(extfile, index.ToString()) + ".png";
+            if(!File.Exists(partial))
+            {
+                MessageBox.Show(partial, "File not found!");
+                return;
+            }
+            using Bitmap partial_bmp = new Bitmap(partial);
+            if(partial_bmp == null)
+            {
+                return;
+            }
+
+            // For some reason, the opacity might be broken?
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                var bak = g.CompositingMode;
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                g.FillRectangle(Brushes.Transparent, rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+                g.CompositingMode = bak;
+                g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));
+            }
+            pictureBox1.Refresh();
+        }
+
         void ExtractAllGlyphs()
         {
             if(!loaded_png || !loaded_txt)
@@ -58,6 +130,8 @@ namespace V3UnityFontReader
             {
                 ExtractGlyph();
                 IncreaseIndex();
+                PaintRectangle();
+                UpdateTextboxString();
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -78,7 +152,8 @@ namespace V3UnityFontReader
             Directory.CreateDirectory(ext);
             string extfile = Path.Combine(ext, Path.GetFileNameWithoutExtension(txt_fn));
             Directory.CreateDirectory(extfile);
-            portion.Save(Path.Combine(extfile, index.ToString()) + ".png");
+            string newpng = Path.Combine(extfile, index.ToString()) + ".png";
+            portion.Save(newpng, System.Drawing.Imaging.ImageFormat.Png);
             portion.Dispose();
             full_image.Dispose();
         }
@@ -86,6 +161,11 @@ namespace V3UnityFontReader
         int InterpretY(int y)
         {
             return pictureBox1.Image.Size.Height - y - rect.m_Height;
+        }
+
+        int NormalizeY(int y)
+        {
+            return y + pictureBox1.Image.Size.Height + rect.m_Height;
         }
 
         TMPCharacter GetCharacterFromIndex(int index)
@@ -162,6 +242,54 @@ namespace V3UnityFontReader
 
                 UpdateTextboxString();
             }
+        }
+
+        int GetGlyphByIndex(uint index)
+        {
+            for (int i = 0; i < font.m_GlyphTable.Count; i++)
+            {
+                if(index == font.m_GlyphTable[i].m_Index)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        void VerifyCharacterTable()
+        {
+            var table = font.m_CharacterTable;
+            List<TMPCharacter> ret = new List<TMPCharacter>();
+            int cont = 0;
+            foreach(TMPCharacter character in table)
+            {
+                if(ret.Contains(character))
+                {
+                    Debug.WriteLine("Found duplicate character: \"" + (char)character.m_Unicode + "\"");
+                    continue;
+                }
+
+                int glyph = GetGlyphByIndex(character.m_GlyphIndex);
+                if(glyph == -1)
+                {
+                    Debug.WriteLine("No equivalent glyph found for character: \"" + (char)(character.m_Unicode) + "\"");
+                    continue;
+                }
+
+                if(character.m_Unicode == 10 || character.m_Unicode == 13)
+                {
+                    Debug.WriteLine("Character is \\r or \\n");
+                    continue;
+                }
+
+                Debug.WriteLine(cont + ": \"" + (char)character.m_Unicode + "\", unicode: " + (uint)character.m_Unicode);
+
+                ret.Add(character);
+                cont++;
+            }
+
+            font.m_CharacterTable = ret;
         }
 
         void OpenTXT()
@@ -249,6 +377,11 @@ namespace V3UnityFontReader
                 last = line;
             }
 
+            VerifyCharacterTable();
+
+            Debug.WriteLine("GlyphTable.Count: " + font.m_GlyphTable.Count);
+            Debug.WriteLine("CharacterTable.Count: " + font.m_CharacterTable.Count);
+
             loaded_txt = true;
 
             if (loaded_png)
@@ -268,18 +401,15 @@ namespace V3UnityFontReader
                 return;
             }
 
-            if (cur_index + 1 >= font.m_UsedGlyphRects.Count)
+            if (cur_index + 1 >= font.m_CharacterTable.Count)
             {
-                cur_index = font.m_UsedGlyphRects.Count - 1;
+                cur_index = font.m_CharacterTable.Count - 1;
                 return;
             }
 
             cur_index++;
+            Debug.WriteLine("cur_index: " + cur_index + ", gTable: " + font.m_GlyphTable.Count + ", cTable: " + font.m_CharacterTable.Count);
             rect = font.m_GlyphTable[cur_index].m_GlyphRect;
-
-            PaintRectangle();
-
-            UpdateTextboxString();
         }
 
         void DecreaseIndex()
@@ -297,10 +427,20 @@ namespace V3UnityFontReader
 
             cur_index--;
             rect = font.m_GlyphTable[cur_index].m_GlyphRect;
+        }
 
-            PaintRectangle();
-
-            UpdateTextboxString();
+        void SaveImageAsPNG()
+        {
+            Image i = pictureBox1.Image;
+            SaveFileDialog save = new SaveFileDialog();
+            save.Filter = ".PNG file|*.png";
+            save.Title = "Save as .PNG";
+            if (save.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            string filename = save.FileName;
+            i.Save(filename);
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -321,11 +461,15 @@ namespace V3UnityFontReader
         private void button3_Click(object sender, EventArgs e)
         {
             DecreaseIndex();
+            PaintRectangle();
+            UpdateTextboxString();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             IncreaseIndex();
+            PaintRectangle();
+            UpdateTextboxString();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -336,6 +480,16 @@ namespace V3UnityFontReader
         private void button5_Click(object sender, EventArgs e)
         {
             ExtractAllGlyphs();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            ReplaceAllGlyphs();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            SaveImageAsPNG();
         }
     }
 }
