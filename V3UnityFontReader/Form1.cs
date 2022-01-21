@@ -14,39 +14,86 @@ namespace V3UnityFontReader
 {
     public partial class Form1 : Form
     {
+        Rectangle rectangle;
         FontStructure font;
         GlyphRect rect;
         bool loaded_png = false;
         bool loaded_txt = false;
         int cur_index = 0;
         string png_fn = "";
+        string txt_fn = "";
         public Form1()
         {
             InitializeComponent();
             font = new FontStructure();
             rect = new GlyphRect();
+            rectangle = new Rectangle();
         }
 
-        void PaintRectangle(int x, int y, int lenx, int leny)
+        void PaintRectangle()
         {
             pictureBox1.Image = new Bitmap(png_fn);
             pictureBox1.Refresh();
             // Y is inverted and does not account for the character itself
-            Rectangle ee = new Rectangle(x, pictureBox1.Image.Size.Height - y - leny, lenx, leny);
-            Graphics gr = Graphics.FromImage(pictureBox1.Image);
-            using (Pen pen = new Pen(Color.Red, 1))
+            rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+            using (Graphics gr = Graphics.FromImage(pictureBox1.Image))
             {
-                gr.DrawRectangle(pen, ee);
+                using (Pen pen = new Pen(Color.Red, 1))
+                {
+                    gr.DrawRectangle(pen, rectangle);
+                }
             }
             pictureBox1.Refresh();
+        }
+
+        void ExtractAllGlyphs()
+        {
+            if(!loaded_png || !loaded_txt)
+            {
+                return;
+            }
+
+            cur_index = 0;
+            for (int j = 0; j < font.m_GlyphTable.Count; j++)
+            {
+                ExtractGlyph();
+                IncreaseIndex();
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
+        void ExtractGlyph()
+        {
+            if (rectangle.Width == 0 || rectangle.Height == 0)
+            {
+                return;
+            }
+
+            int index = font.m_GlyphTable[cur_index].m_Index;
+            using Bitmap full_image = new Bitmap(png_fn);
+            using Image portion = full_image.Clone(rectangle, full_image.PixelFormat);
+            string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
+            Directory.CreateDirectory(ext);
+            string extfile = Path.Combine(ext, Path.GetFileNameWithoutExtension(txt_fn));
+            Directory.CreateDirectory(extfile);
+            portion.Save(Path.Combine(extfile, index.ToString()) + ".png");
+            portion.Dispose();
+            full_image.Dispose();
+        }
+
+        int InterpretY(int y)
+        {
+            return pictureBox1.Image.Size.Height - y - rect.m_Height;
         }
 
         TMPCharacter GetCharacterFromIndex(int index)
         {
             TMPCharacter character = new TMPCharacter();
-            foreach(TMPCharacter c in font.m_CharacterTable)
+            foreach (TMPCharacter c in font.m_CharacterTable)
             {
-                if(c.m_GlyphIndex == index)
+                if (c.m_GlyphIndex == index)
                 {
                     character = c;
                 }
@@ -58,7 +105,7 @@ namespace V3UnityFontReader
         {
             int index = font.m_GlyphTable[cur_index].m_Index;
             TMPCharacter character = GetCharacterFromIndex(index);
-            if(character == new TMPCharacter())
+            if (character == new TMPCharacter())
             {
                 return;
             }
@@ -76,7 +123,7 @@ namespace V3UnityFontReader
                 y +
                 ", InterpretedY: " +
                 // Y is inverted and does not account for the character itself
-                (pictureBox1.Image.Size.Height - rect.m_Y - rect.m_Height) +
+                InterpretY(y) +
                 ", cW: " +
                 rect.m_Width +
                 ", cH: " +
@@ -111,12 +158,7 @@ namespace V3UnityFontReader
             {
                 rect = font.m_GlyphTable[cur_index].m_GlyphRect;
 
-                PaintRectangle(
-                    rect.m_X,
-                    rect.m_Y,
-                    rect.m_Width,
-                    rect.m_Height
-                );
+                PaintRectangle();
 
                 UpdateTextboxString();
             }
@@ -136,27 +178,28 @@ namespace V3UnityFontReader
             {
                 return;
             }
-
+            txt_fn = filename;
+            cur_index = 0;
             font = new FontStructure();
             font.m_GlyphTable = new List<Glyph>();
             font.m_CharacterTable = new List<TMPCharacter>();
             font.m_UsedGlyphRects = new List<GlyphRect>();
 
             string last = "";
-            var lines = File.ReadAllLines(filename);
+            var lines = File.ReadAllLines(txt_fn);
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
-                if(line.Length == 0)
+                if (line.Length == 0)
                 {
                     continue;
                 }
 
-                if(line.Contains("int size ="))
+                if (line.Contains("int size ="))
                 {
                     int size = int.Parse(line.Substring(15));
                     int cont = 0;
-                    for(int j = 0; j < size; j++)
+                    for (int j = 0; j < size; j++)
                     {
                         int base_i = i + 1;
 
@@ -170,9 +213,10 @@ namespace V3UnityFontReader
                                 font.m_GlyphTable[j].Read(line, k);
                                 i++;
                             }
-                        } else
+                        }
+                        else
                         {
-                            if(last.Contains("m_CharacterTable"))
+                            if (last.Contains("m_CharacterTable"))
                             {
                                 font.m_CharacterTable.Add(new TMPCharacter());
                                 font.m_CharacterTable[j] = new TMPCharacter();
@@ -182,9 +226,10 @@ namespace V3UnityFontReader
                                     font.m_CharacterTable[j].Read(line, k);
                                     i++;
                                 }
-                            } else
+                            }
+                            else
                             {
-                                if(last.Contains("m_UsedGlyphRects"))
+                                if (last.Contains("m_UsedGlyphRects"))
                                 {
                                     font.m_UsedGlyphRects.Add(new GlyphRect());
                                     font.m_UsedGlyphRects[j] = new GlyphRect();
@@ -210,12 +255,7 @@ namespace V3UnityFontReader
             {
                 rect = font.m_GlyphTable[cur_index].m_GlyphRect;
 
-                PaintRectangle(
-                    rect.m_X,
-                    rect.m_Y,
-                    rect.m_Width,
-                    rect.m_Height
-                );
+                PaintRectangle();
 
                 UpdateTextboxString();
             }
@@ -237,12 +277,7 @@ namespace V3UnityFontReader
             cur_index++;
             rect = font.m_GlyphTable[cur_index].m_GlyphRect;
 
-            PaintRectangle(
-                rect.m_X,
-                rect.m_Y,
-                rect.m_Width,
-                rect.m_Height
-            );
+            PaintRectangle();
 
             UpdateTextboxString();
         }
@@ -263,12 +298,7 @@ namespace V3UnityFontReader
             cur_index--;
             rect = font.m_GlyphTable[cur_index].m_GlyphRect;
 
-            PaintRectangle(
-                rect.m_X,
-                rect.m_Y,
-                rect.m_Width,
-                rect.m_Height
-            );
+            PaintRectangle();
 
             UpdateTextboxString();
         }
@@ -301,6 +331,11 @@ namespace V3UnityFontReader
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            ExtractAllGlyphs();
         }
     }
 }
