@@ -26,6 +26,7 @@ namespace V3UnityFontReader
         bool loaded_txt = false;
         List<string> txt_lines = new List<string>();
         int cur_index = 0;
+        string cur_filename = "";
         string png_fn = "";
         string txt_fn = "";
         List<SpecialCharacter> specials = new List<SpecialCharacter>();
@@ -37,12 +38,47 @@ namespace V3UnityFontReader
             rectangle = new Rectangle();
         }
 
+        TMPCharacter WhatIsInsideGlyphRect(GlyphRect myrect)
+        {
+            TMPCharacter ret = new TMPCharacter();
+
+            foreach(TMPCharacter ch in font.m_CharacterTable)
+            {
+                int glyph_index = GetGlyphByIndex(ch.m_GlyphIndex);
+                if(glyph_index == -1)
+                {
+                    continue;
+                }
+                Glyph glyph = font.m_GlyphTable[glyph_index];
+                if(glyph == null)
+                {
+                    continue;
+                }
+                if(glyph.m_GlyphRect.m_X == 0 && glyph.m_GlyphRect.m_Y == 0)
+                {
+                    continue;
+                }
+                bool is_inside_x = glyph.m_GlyphRect.m_X > myrect.m_X && glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width < myrect.m_X + myrect.m_Width;
+                bool is_inside_y = glyph.m_GlyphRect.m_Y > myrect.m_Y && glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height < myrect.m_Y + myrect.m_Height;
+                if(is_inside_x && is_inside_y)
+                {
+                    ret = ch;
+                    break;
+                }
+            }
+
+            return ret;
+        }
+
         void PaintRectangle()
         {
             pictureBox1.Image = new Bitmap(png_fn);
             pictureBox1.Refresh();
             // Y is inverted and does not account for the character itself
+
             rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+
+            //rectangle = new Rectangle(font.m_UsedGlyphRects[cur_index].m_X, InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y), font.m_UsedGlyphRects[cur_index].m_Width, font.m_UsedGlyphRects[cur_index].m_Height);
             using (Graphics gr = Graphics.FromImage(pictureBox1.Image))
             {
                 using (Pen pen = new Pen(Color.Red, 1))
@@ -51,6 +87,7 @@ namespace V3UnityFontReader
                 }
             }
             pictureBox1.Refresh();
+
         }
 
         void ReplaceAllGlyphs()
@@ -70,25 +107,6 @@ namespace V3UnityFontReader
             pictureBox1.Refresh();
             */
 
-            for (int j = 0; j < font.m_GlyphTable.Count; j++)
-            {
-                rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
-                // If we need to replace/add images we also need to read the data first
-                // or it's going to read the data of the "default" file
-                ReplaceGlyphData();
-                ReplaceGlyphImage();
-                IncreaseIndex();
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
-
-            cur_index = 0;
-        }
-
-        void ReplaceGlyphData()
-        {
-            int index = font.m_GlyphTable[cur_index].m_Index;
             string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
             if (!Directory.Exists(ext))
             {
@@ -107,7 +125,69 @@ namespace V3UnityFontReader
                 MessageBox.Show(data, "The \"data\" folder couldn't be found!");
                 return;
             }
-            string txtdata = Path.Combine(data, index.ToString()) + ".txt";
+
+            var files = Directory.GetFiles(data);
+
+            // Don't remember what this does but I'll leave it here
+            var orderedList = files
+           .OrderBy(x => new string(x.Where(char.IsLetter).ToArray()))
+           .ThenBy(x =>
+           {
+               int number;
+               if (int.TryParse(new string(x.Where(char.IsDigit).ToArray()), out number))
+                   return number;
+               return -1;
+           }).ToList();
+
+            var files_len = files.Length;
+            if(files_len == 0)
+            {
+                MessageBox.Show(data, "The \"data\" folder is empty!");
+                return;
+            }
+
+            font.m_GlyphTable = new List<Glyph>();
+            font.m_CharacterTable = new List<TMPCharacter>();
+
+            for (int j = 0; j < files_len; j++)
+            {
+                cur_index = j;
+                cur_filename = orderedList[j];
+
+                Debug.WriteLine(cur_filename);
+
+                if(!File.Exists(cur_filename))
+                {
+                    Debug.WriteLine("Does not exist: " + cur_filename);
+                    continue;
+                }
+
+                font.m_GlyphTable.Add(new Glyph());
+                font.m_CharacterTable.Add(new TMPCharacter());
+
+                ReplaceGlyphData();
+
+                // If we need to replace/add images we also need to read the data first
+                // or else it's going to read the data of the "default" file
+
+                rect = font.m_GlyphTable[cur_index].m_GlyphRect;
+                rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+
+                ReplaceGlyphImage();
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            // Sort by m_Index / m_GlyphIndex
+            font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
+            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+            cur_index = 0;
+        }
+
+        void ReplaceGlyphData()
+        {
+            string txtdata = cur_filename;
             if (!File.Exists(txtdata))
             {
                 MessageBox.Show(txtdata, "File not found!");
@@ -122,6 +202,7 @@ namespace V3UnityFontReader
                 return;
             }
 
+            // Read the .txt "line by line"
             using (StreamReader readtext = new StreamReader(txtdata))
             {
                 font.m_GlyphTable[cur_index].Read(content[0], 2);
@@ -289,7 +370,20 @@ namespace V3UnityFontReader
 
         int InterpretY(int y)
         {
+            // Used to read "partial glyphs" a.k.a. letters/numbers/symbols
             return pictureBox1.Image.Size.Height - y - rect.m_Height;
+        }
+
+        int InterpretY2(int y)
+        {
+            // Used to read *used* "full glyphs" a.k.a. letters/numbers/symbols PLUS their surrounding area (used in colored CLT)
+            return pictureBox1.Image.Size.Height - y - font.m_UsedGlyphRects[cur_index].m_Height;
+        }
+
+        int InterpretY3(int y)
+        {
+            // Used to read *free* glyphs (dumbest feature ever)
+            return pictureBox1.Image.Size.Height - y - font.m_FreeGlyphRects[cur_index].m_Height;
         }
 
         int NormalizeY(int y)
@@ -338,6 +432,7 @@ namespace V3UnityFontReader
                 ", cH: " +
                 rect.m_Height
                 ;
+            //textBox1.Text = "Inside is: " + (char)WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode;
             textBox1.Update();
             textBox1.Refresh();
         }
@@ -511,6 +606,20 @@ namespace V3UnityFontReader
                                         font.m_UsedGlyphRects[j].Read(line, k);
                                         i++;
                                     }
+                                } else
+                                {
+                                    if(last.Contains("m_FreeGlyphRects"))
+                                    {
+                                        font.m_FreeGlyphRects.Add(new GlyphRect());
+                                        font.m_FreeGlyphRects[j] = new GlyphRect();
+                                        for(int k = 0; k < 6;k++)
+                                        {
+                                            line = lines[base_i + k];
+                                            txt_lines.Add(line);
+                                            font.m_FreeGlyphRects[j].Read(line, k);
+                                            i++;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -640,6 +749,13 @@ namespace V3UnityFontReader
                             {
                                 size = font.m_UsedGlyphRects.Count;
                                 txt_lines[j] = before_equals + size.ToString();
+                            } else
+                            {
+                                if(last.Contains("m_FreeGlyphRects"))
+                                {
+                                    size = font.m_FreeGlyphRects.Count;
+                                    txt_lines[j] = before_equals + size.ToString();
+                                }
                             }
                         }
                     }
@@ -675,6 +791,16 @@ namespace V3UnityFontReader
                                         txt_lines[j + k] = font.m_UsedGlyphRects[i].Write(txt_lines[j + k], k, i);
                                     }
                                     j += 6;
+                                } else
+                                {
+                                    if(last.Contains("m_FreeGlyphRects"))
+                                    {
+                                        for(int k = 0; k< 6; k++)
+                                        {
+                                            txt_lines[j + k] = font.m_FreeGlyphRects[i].Write(txt_lines[j + k], k, i);
+                                        }
+                                        j += 6;
+                                    }
                                 }
                             }
                         }
