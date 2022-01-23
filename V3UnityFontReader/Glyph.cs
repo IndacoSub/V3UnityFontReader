@@ -20,7 +20,7 @@ namespace V3UnityFontReader
 
             string after_equal = str.Substring(str.LastIndexOf("=") + 1);
 
-            switch(index)
+            switch (index)
             {
                 case 0:
                     break;
@@ -42,7 +42,7 @@ namespace V3UnityFontReader
                     m_Metrics.m_HorizontalBearingX = float.Parse(after_equal);
                     break;
                 case 7:
-                    m_Metrics.m_VerticalBearingX = float.Parse(after_equal);
+                    m_Metrics.m_HorizontalBearingY = float.Parse(after_equal);
                     break;
                 case 8:
                     m_Metrics.m_HorizontalAdvance = float.Parse(after_equal);
@@ -69,9 +69,84 @@ namespace V3UnityFontReader
                     m_AtlasIndex = int.Parse(after_equal);
                     break;
                 default:
-                    Debug.WriteLine("Unexpected case in Gylph!");
+                    Debug.WriteLine("(R) Unexpected case in Gylph!");
                     break;
             }
+        }
+
+        public string Write(string str, int index, int param)
+        {
+            string ret = str;
+            string before = "";
+            string after = "";
+            if (index == 0)
+            {
+                before = str.Substring(0, str.LastIndexOf("[") + 1);
+                after = "]";
+            }
+            else
+            {
+                if (index == 1)
+                {
+                    Debug.WriteLine(str);
+                }
+                before = str.Substring(0, str.LastIndexOf("=") + 1 + 1);
+                after = "";
+            }
+
+            switch (index)
+            {
+                case 0:
+                    ret = before + param + after;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    ret = before + m_Index;
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    ret = before + m_Metrics.m_Width;
+                    break;
+                case 5:
+                    ret = before + m_Metrics.m_Height;
+                    break;
+                case 6:
+                    ret = before + m_Metrics.m_HorizontalBearingX;
+                    break;
+                case 7:
+                    ret = before + m_Metrics.m_HorizontalBearingY;
+                    break;
+                case 8:
+                    ret = before + m_Metrics.m_HorizontalAdvance;
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    ret = before + m_GlyphRect.m_X;
+                    break;
+                case 11:
+                    ret = before + m_GlyphRect.m_Y;
+                    break;
+                case 12:
+                    ret = before + m_GlyphRect.m_Width;
+                    break;
+                case 13:
+                    ret = before + m_GlyphRect.m_Height;
+                    break;
+                case 14:
+                    ret = before + m_Scale;
+                    break;
+                case 15:
+                    ret = before + m_AtlasIndex;
+                    break;
+                default:
+                    Debug.WriteLine("(W) Unexpected case in Gylph!");
+                    break;
+            }
+
+            return ret;
         }
     }
 }

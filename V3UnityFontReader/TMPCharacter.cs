@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace V3UnityFontReader
 {
-    internal class TMPCharacter
+    public class TMPCharacter
     {
         public Int32 m_ElementType = 1;
         public UInt32 m_Unicode = 0;
@@ -37,9 +37,56 @@ namespace V3UnityFontReader
                     m_Scale = float.Parse(after_equal);
                     break;
                 default:
-                    Debug.WriteLine("Unexpected case in TMPCharacter!");
+                    Debug.WriteLine("(R) Unexpected case in TMPCharacter!");
                     break;
             }
+        }
+
+        public string Write(string str, int index, int param)
+        {
+            string ret = str;
+            string before = "";
+            string after = "";
+            if (index == 0)
+            {
+                before = str.Substring(0, str.LastIndexOf("[") + 1);
+                after = "]";
+            }
+            else
+            {
+                if (index == 1)
+                {
+                    Debug.WriteLine(str);
+                }
+                before = str.Substring(0, str.LastIndexOf("=") + 1 + 1);
+                after = "";
+            }
+
+            switch (index)
+            {
+                case 0:
+                    ret = before + param + after;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    ret = before + m_ElementType;
+                    break;
+                case 3:
+                    ret = before + m_Unicode;
+                    break;
+                case 4:
+                    ret = before + m_GlyphIndex;
+                    break;
+                case 5:
+                    ret = before + m_Scale;
+                    break;
+                default:
+                    Debug.WriteLine("(W) Unexpected case in TMPCharacter!");
+                    break;
+            }
+
+            return ret;
         }
     }
 }

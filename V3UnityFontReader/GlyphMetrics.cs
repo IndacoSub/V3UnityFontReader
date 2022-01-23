@@ -11,7 +11,7 @@ namespace V3UnityFontReader
         public float m_Width = 0;
         public float m_Height = 0;
         public float m_HorizontalBearingX = 0;
-        public float m_VerticalBearingX = 0;
+        public float m_HorizontalBearingY = 0;
         public float m_HorizontalAdvance = 0;
     }
 }
