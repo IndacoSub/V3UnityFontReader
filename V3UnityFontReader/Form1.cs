@@ -293,7 +293,7 @@ namespace V3UnityFontReader
                 return -1;
             }).ToList();
 
-            specials.Clear();
+            //specials.Clear();
 
             int cont_txt = 0;
             total_red_data = 0;
@@ -939,7 +939,7 @@ namespace V3UnityFontReader
                     {
                         size = font.m_GlyphTable.Count;
                         txt_lines[j] = before_equals + size.ToString();
-                        //txt_lines[j - 1] = before_last + size.ToString() + after_last;
+                        txt_lines[j - 1] = before_last + size.ToString() + after_last;
                     }
                     else
                     {
@@ -947,7 +947,7 @@ namespace V3UnityFontReader
                         {
                             size = font.m_CharacterTable.Count;
                             txt_lines[j] = before_equals + size.ToString();
-                            //txt_lines[j - 1] = before_last + size.ToString() + after_last;
+                            txt_lines[j - 1] = before_last + size.ToString() + after_last;
                         }
                         else
                         {
@@ -955,7 +955,7 @@ namespace V3UnityFontReader
                             {
                                 size = font.m_UsedGlyphRects.Count;
                                 txt_lines[j] = before_equals + size.ToString();
-                                //txt_lines[j - 1] = before_last + size.ToString() + after_last;
+                                txt_lines[j - 1] = before_last + size.ToString() + after_last;
                                 Debug.WriteLine("Contains! Size: " + font.m_UsedGlyphRects.Count);
                             }
                             else
@@ -964,7 +964,7 @@ namespace V3UnityFontReader
                                 {
                                     size = font.m_FreeGlyphRects.Count;
                                     txt_lines[j] = before_equals + size.ToString();
-                                    //txt_lines[j - 1] = before_last + size.ToString() + after_last;
+                                    txt_lines[j - 1] = before_last + size.ToString() + after_last;
                                 }
                             }
                         }
@@ -999,7 +999,7 @@ namespace V3UnityFontReader
                                     Debug.WriteLine("m_UsedGlyphRects size: " + font.m_UsedGlyphRects.Count);
                                     for (int k = 0; k < 6; k++)
                                     {
-                                        //txt_lines[j + k] = font.m_UsedGlyphRects[i].Write(txt_lines[j + k], k, i);
+                                        txt_lines[j + k] = font.m_UsedGlyphRects[i].Write(txt_lines[j + k], k, i);
                                     }
                                     j += 6;
                                 }
