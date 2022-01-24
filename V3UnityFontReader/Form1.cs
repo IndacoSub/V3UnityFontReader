@@ -370,23 +370,23 @@ namespace V3UnityFontReader
             // Read the .txt "line by line"
             using (StreamReader readtext = new StreamReader(txtdata))
             {
-                font.m_GlyphTable[cur_index].Read(content[0], 2);
-                font.m_GlyphTable[cur_index].Read(content[1], 4);
-                font.m_GlyphTable[cur_index].Read(content[2], 5);
-                font.m_GlyphTable[cur_index].Read(content[3], 6);
-                font.m_GlyphTable[cur_index].Read(content[4], 7);
-                font.m_GlyphTable[cur_index].Read(content[5], 8);
-                font.m_GlyphTable[cur_index].Read(content[6], 10);
-                font.m_GlyphTable[cur_index].Read(content[7], 11);
-                font.m_GlyphTable[cur_index].Read(content[8], 12);
-                font.m_GlyphTable[cur_index].Read(content[9], 13);
-                font.m_GlyphTable[cur_index].Read(content[10], 14);
-                font.m_GlyphTable[cur_index].Read(content[11], 15);
+                font.m_GlyphTable[total_red_data].Read(content[0], 2);
+                font.m_GlyphTable[total_red_data].Read(content[1], 4);
+                font.m_GlyphTable[total_red_data].Read(content[2], 5);
+                font.m_GlyphTable[total_red_data].Read(content[3], 6);
+                font.m_GlyphTable[total_red_data].Read(content[4], 7);
+                font.m_GlyphTable[total_red_data].Read(content[5], 8);
+                font.m_GlyphTable[total_red_data].Read(content[6], 10);
+                font.m_GlyphTable[total_red_data].Read(content[7], 11);
+                font.m_GlyphTable[total_red_data].Read(content[8], 12);
+                font.m_GlyphTable[total_red_data].Read(content[9], 13);
+                font.m_GlyphTable[total_red_data].Read(content[10], 14);
+                font.m_GlyphTable[total_red_data].Read(content[11], 15);
 
-                font.m_CharacterTable[cur_index].Read(content[13], 2);
-                font.m_CharacterTable[cur_index].Read(content[14], 3);
-                font.m_CharacterTable[cur_index].Read(content[15], 4);
-                font.m_CharacterTable[cur_index].Read(content[16], 5);
+                font.m_CharacterTable[total_red_data].Read(content[13], 2);
+                font.m_CharacterTable[total_red_data].Read(content[14], 3);
+                font.m_CharacterTable[total_red_data].Read(content[15], 4);
+                font.m_CharacterTable[total_red_data].Read(content[16], 5);
 
                 //VerifyCharacterTable();
 
@@ -404,7 +404,7 @@ namespace V3UnityFontReader
                 }
             }
 
-            rect = font.m_GlyphTable[cur_index].m_GlyphRect;
+            rect = font.m_GlyphTable[total_red_data].m_GlyphRect;
             rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
             total_red_data++;
         }
@@ -416,7 +416,7 @@ namespace V3UnityFontReader
                 return;
             }
 
-            int index = font.m_GlyphTable[cur_index].m_Index;
+            int index = font.m_GlyphTable[total_red_image].m_Index;
             string partial = path;
             if (!File.Exists(partial))
             {
