@@ -26,3 +26,5 @@ V3UnityFontReader/obj/Release/net5.0-windows/V3UnityFontReader.SpecialCharacter.
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.dgspec.json
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.g.props
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.g.targets
+*.txt
+*.png
