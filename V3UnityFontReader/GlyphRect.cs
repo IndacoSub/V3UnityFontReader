@@ -43,43 +43,36 @@ namespace V3UnityFontReader
             }
         }
 
-        public string Write(string str, int index, int param)
+        public string Write(int index, int param, bool free)
         {
-            string ret = str;
+            string ret = "";
             string before = "";
             string after = "";
-            if (index == 0)
-            {
-                before = str.Substring(0, str.LastIndexOf("[") + 1);
-                after = "]";
-            }
-            else
-            {
-                if (index == 1)
-                {
-                    Debug.WriteLine(str);
-                }
-                before = str.Substring(0, str.LastIndexOf("=") + 1 + 1);
-                after = "";
-            }
 
             switch (index)
             {
                 case 0:
+                    before = "  [";
+                    after = "]";
                     ret = before + param + after;
                     break;
                 case 1:
+                    ret = free ? "   0 GlyphRect m_FreeGlyphRects" : "   0 GlyphRect m_UsedGlyphRects";
                     break;
                 case 2:
+                    before = "    0 int m_X = ";
                     ret = before + m_X;
                     break;
                 case 3:
+                    before = "    0 int m_Y = ";
                     ret = before + m_Y;
                     break;
                 case 4:
+                    before = "    0 int m_Width = ";
                     ret = before + m_Width;
                     break;
                 case 5:
+                    before = "    0 int m_Height = ";
                     ret = before + m_Height;
                     break;
                 default:

@@ -74,71 +74,74 @@ namespace V3UnityFontReader
             }
         }
 
-        public string Write(string str, int index, int param)
+        public string Write(int index, int param)
         {
-            string ret = str;
+            string ret = "";
             string before = "";
             string after = "";
-            if (index == 0)
-            {
-                before = str.Substring(0, str.LastIndexOf("[") + 1);
-                after = "]";
-            }
-            else
-            {
-                if (index == 1)
-                {
-                    Debug.WriteLine(str);
-                }
-                before = str.Substring(0, str.LastIndexOf("=") + 1 + 1);
-                after = "";
-            }
 
             switch (index)
             {
                 case 0:
+                    before = "  [";
+                    after = "]";
                     ret = before + param + after;
                     break;
                 case 1:
+                    ret = "   0 Glyph m_GlyphTable";
                     break;
                 case 2:
+                    before = "    0 unsigned int m_Index = ";
                     ret = before + m_Index;
                     break;
                 case 3:
+                    ret = "    0 GlyphMetrics m_Metrics";
                     break;
                 case 4:
+                    before = "     0 float m_Width = ";
                     ret = before + m_Metrics.m_Width;
                     break;
                 case 5:
+                    before = "     0 float m_Height = ";
                     ret = before + m_Metrics.m_Height;
                     break;
                 case 6:
+                    before = "     0 float m_HorizontalBearingX = ";
                     ret = before + m_Metrics.m_HorizontalBearingX;
                     break;
                 case 7:
+                    before = "     0 float m_HorizontalBearingY = ";
                     ret = before + m_Metrics.m_HorizontalBearingY;
                     break;
                 case 8:
+                    before = "     0 float m_HorizontalAdvance = ";
                     ret = before + m_Metrics.m_HorizontalAdvance;
                     break;
                 case 9:
+                    ret = "    0 GlyphRect m_GlyphRect";
                     break;
                 case 10:
+                    before = "     0 int m_X = ";
                     ret = before + m_GlyphRect.m_X;
                     break;
                 case 11:
+                    before = "     0 int m_Y = ";
                     ret = before + m_GlyphRect.m_Y;
                     break;
                 case 12:
+                    before = "     0 int m_Width = ";
                     ret = before + m_GlyphRect.m_Width;
                     break;
                 case 13:
+                    before = "     0 int m_Height = ";
                     ret = before + m_GlyphRect.m_Height;
                     break;
                 case 14:
+                    before = "    0 float m_Scale = ";
                     ret = before + m_Scale;
                     break;
                 case 15:
+                    before = "    0 int m_AtlasIndex = ";
                     ret = before + m_AtlasIndex;
                     break;
                 default:
