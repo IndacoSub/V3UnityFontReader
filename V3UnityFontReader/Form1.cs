@@ -6,12 +6,26 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace V3UnityFontReader
 {
+
+    public class MyComparer : IComparer<string>
+    {
+
+        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+        static extern int StrCmpLogicalW(String x, String y);
+
+        public int Compare(string x, string y)
+        {
+            return StrCmpLogicalW(x, y);
+        }
+
+    }
     public class SpecialCharacter
     {
         public TMPCharacter TCharacter = new TMPCharacter();
@@ -234,14 +248,6 @@ namespace V3UnityFontReader
             pictureBox1.Image = new Bitmap(png_fn);
             cur_index = 0;
 
-            /*
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
-            {
-                g.Clear(Color.Transparent);
-            }
-            pictureBox1.Refresh();
-            */
-
             string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
             if (!Directory.Exists(ext))
             {
@@ -270,32 +276,19 @@ namespace V3UnityFontReader
             string[] data_files =
             Directory.GetFiles(data, "*.txt", SearchOption.AllDirectories);
 
-            var ordered_data = data_files
-            .OrderBy(x => new string(x.Where(char.IsLetter).ToArray()))
-            .ThenBy(x =>
-            {
-               int number;
-               if (int.TryParse(new string(x.Where(char.IsDigit).ToArray()), out number))
-                   return number;
-               return -1;
-            }).ToList();
-
             string[] image_files =
             Directory.GetFiles(images, "*.png", SearchOption.AllDirectories);
 
-            var ordered_images = image_files
-            .OrderBy(x => new string(x.Where(char.IsLetter).ToArray()))
-            .ThenBy(x =>
-            {
-                int number;
-                if (int.TryParse(new string(x.Where(char.IsDigit).ToArray()), out number))
-                    return number;
-                return -1;
-            }).ToList();
+            Array.Sort(data_files, new MyComparer());
+            Array.Sort(image_files, new MyComparer());
+
+            Debug.WriteLine("Data files count: " + data_files.Length);
+            Debug.WriteLine("Image files count: " + image_files.Length);
 
             //specials.Clear();
 
             int cont_txt = 0;
+            int cont_png = 0;
             total_red_data = 0;
             total_red_image = 0;
             total_red_glyphs = 0;
@@ -307,7 +300,7 @@ namespace V3UnityFontReader
             // If we need to replace/add images we also need to read the data first
             // or else it's going to read the data of the "default" file
 
-            foreach (string f in ordered_data)
+            foreach (string f in data_files)
             {
                 cur_index = total_red_data;
 
@@ -318,25 +311,27 @@ namespace V3UnityFontReader
                 GC.WaitForPendingFinalizers();
             }
 
-            foreach(string f in ordered_images)
+            // Sort by m_Index / m_GlyphIndex
+            font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
+            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+            VerifyCharacterTable();
+            VerifyUsedGlyphTable();
+
+            foreach (string f in image_files)
             {
-                cur_index = total_red_image;
+                //Debug.WriteLine("ImageF: " + (cont_png + 1) + ", " + f);
+                cur_index = cont_png;
                 ReplaceGlyphImage(f);
+                cont_png++;
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
 
             Debug.WriteLine("TXT red: " + cont_txt);
+            Debug.WriteLine("PNG red: " + cont_png);
 
-            // Sort by m_Index / m_GlyphIndex
-
-            //DeleteUsedFreeGlyphs();
-
-            font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
-            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
-
-            VerifyUsedGlyphTable();
+            DeleteUsedFreeGlyphs();
 
             cur_index = 0;
         }
@@ -346,12 +341,12 @@ namespace V3UnityFontReader
             string txtdata = path;
             if (!File.Exists(txtdata))
             {
-                //MessageBox.Show(txtdata, "File not found!");
+                MessageBox.Show(txtdata, "File not found!");
                 return;
             }
 
             string[] content = File.ReadAllLines(txtdata);
-            if(content == null)
+            if (content == null)
             {
                 MessageBox.Show(txtdata, "Null file!");
                 return;
@@ -404,29 +399,44 @@ namespace V3UnityFontReader
                 }
             }
 
-            rect = font.m_GlyphTable[total_red_data].m_GlyphRect;
-            rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
             total_red_data++;
         }
 
         void ReplaceGlyphImage(string path)
         {
-            if (rectangle.Width == 0 || rectangle.Height == 0)
-            {
-                return;
-            }
 
-            int index = font.m_GlyphTable[total_red_image].m_Index;
             string partial = path;
             if (!File.Exists(partial))
             {
-                //MessageBox.Show(partial, "File not found!");
+                MessageBox.Show(partial, "File not found!");
                 return;
             }
 
             using Bitmap partial_bmp = new Bitmap(partial);
             if (partial_bmp == null)
             {
+                Debug.WriteLine("partial_bmp is null!");
+                return;
+            }
+
+            string glyph_index = path.Substring(path.LastIndexOf("\\") + 1);
+            //Debug.WriteLine("1: " + glyph_index);
+            glyph_index = glyph_index.Substring(0, glyph_index.IndexOf('.'));
+            //Debug.WriteLine("2: " + glyph_index);
+            int glyph_index_int = int.Parse(glyph_index);
+            int pos = GetGlyphByIndex((uint)glyph_index_int);
+            if (pos == -1)
+            {
+                Debug.WriteLine("Couldn't find equivalent glyph with m_Index: " + glyph_index_int);
+                return;
+            }
+
+            rect = font.m_GlyphTable[pos].m_GlyphRect;
+            rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+
+            if (rectangle.Width == 0 || rectangle.Height == 0)
+            {
+                Debug.WriteLine("The rectangle for " + partial + " (glyph: " + font.m_GlyphTable[total_red_image].m_Index + ") is empty!");
                 return;
             }
 
@@ -704,7 +714,8 @@ namespace V3UnityFontReader
                     if (!specials.Contains(sc))
                     {
                         specials.Add(sc);
-                    } else
+                    }
+                    else
                     {
                         Debug.WriteLine("Duplicate special: " + character.m_Unicode);
                     }
@@ -1023,7 +1034,7 @@ namespace V3UnityFontReader
                 {
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
                     before_equals += "\"";
-                    foreach(TMPCharacter c in bak_charactertable)
+                    foreach (TMPCharacter c in bak_charactertable)
                     {
                         before_equals += (char)c.m_Unicode;
                     }

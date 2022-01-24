@@ -28,3 +28,13 @@ V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.g.props
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.g.targets
 *.txt
 *.png
+V3UnityFontReader/bin/Debug/net5.0-windows/ref/V3UnityFontReader.dll
+V3UnityFontReader/bin/Debug/net5.0-windows/V3UnityFontReader.deps.json
+V3UnityFontReader/bin/Debug/net5.0-windows/V3UnityFontReader.dll
+V3UnityFontReader/bin/Debug/net5.0-windows/V3UnityFontReader.exe
+V3UnityFontReader/bin/Debug/net5.0-windows/V3UnityFontReader.runtimeconfig.dev.json
+V3UnityFontReader/bin/Debug/net5.0-windows/V3UnityFontReader.runtimeconfig.json
+V3UnityFontReader/obj/Debug/net5.0-windows/apphost.exe
+V3UnityFontReader/obj/Debug/net5.0-windows/ref/V3UnityFontReader.dll
+V3UnityFontReader/obj/Debug/net5.0-windows/V3UnityFontReader.dll
+V3UnityFontReader/obj/Debug/net5.0-windows/V3UnityFontReader.MyComparer.resources
