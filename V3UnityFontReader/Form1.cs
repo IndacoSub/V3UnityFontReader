@@ -26,6 +26,9 @@ namespace V3UnityFontReader
         bool loaded_txt = false;
         List<string> txt_lines = new List<string>();
         int cur_index = 0;
+        int total_red_data = 0;
+        int total_red_glyphs = 0;
+        int total_red_image = 0;
         string cur_filename = "";
         string png_fn = "";
         string txt_fn = "";
@@ -38,29 +41,114 @@ namespace V3UnityFontReader
             rectangle = new Rectangle();
         }
 
+        void DeleteUsedFreeGlyphs()
+        {
+            List<GlyphRect> free_after = new List<GlyphRect>();
+
+            foreach (GlyphRect used in font.m_UsedGlyphRects)
+            {
+                foreach (GlyphRect free in font.m_FreeGlyphRects)
+                {
+                    Rectangle usedrect = new Rectangle(used.m_X, used.m_Y, used.m_Width, used.m_Height);
+                    Rectangle freerect = new Rectangle(free.m_X, free.m_Y, free.m_Width, free.m_Height);
+                    if (usedrect.IntersectsWith(freerect) || freerect.IntersectsWith(usedrect))
+                    {
+                        continue;
+                    }
+
+                    if (!free_after.Contains(free))
+                    {
+                        free_after.Add(free);
+                    }
+                }
+            }
+
+            font.m_FreeGlyphRects = free_after;
+        }
+
+        bool IsSpecial(TMPCharacter ch)
+        {
+            foreach (SpecialCharacter character in specials)
+            {
+                if (character.TCharacter.m_GlyphIndex == ch.m_GlyphIndex)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool CanHaveUsedGlyph(TMPCharacter ch)
+        {
+            bool is_special = IsSpecial(ch);
+            if (is_special)
+            {
+                Debug.WriteLine("Is special?");
+                return false;
+            }
+
+            int g = GetGlyphByIndex(ch.m_GlyphIndex);
+            if (g == -1)
+            {
+                Debug.WriteLine("GlyphIndex is -1?: " + ch.m_GlyphIndex);
+                return false;
+            }
+
+            Glyph gg = font.m_GlyphTable[g];
+            bool has_rect_coords = gg.m_GlyphRect.m_Width > 0 && gg.m_GlyphRect.m_Height > 0;
+            return has_rect_coords;
+        }
+
+        int UsedGlyphRectByCharacter(TMPCharacter ch)
+        {
+            int ret = -1;
+
+            foreach (GlyphRect glyphRect in font.m_UsedGlyphRects)
+            {
+                ret++;
+                TMPCharacter temp = WhatIsInsideGlyphRect(glyphRect);
+                if (temp == null)
+                {
+                    continue;
+                }
+                if (temp == new TMPCharacter())
+                {
+                    continue;
+                }
+                if (temp.m_GlyphIndex == ch.m_GlyphIndex)
+                {
+                    return ret;
+                }
+            }
+
+            return -1;
+        }
+
         TMPCharacter WhatIsInsideGlyphRect(GlyphRect myrect)
         {
             TMPCharacter ret = new TMPCharacter();
 
-            foreach(TMPCharacter ch in font.m_CharacterTable)
+            foreach (TMPCharacter ch in font.m_CharacterTable)
             {
+                //Debug.WriteLine("ch.Index: " + ch.m_GlyphIndex);
                 int glyph_index = GetGlyphByIndex(ch.m_GlyphIndex);
-                if(glyph_index == -1)
+                if (glyph_index == -1)
                 {
                     continue;
                 }
                 Glyph glyph = font.m_GlyphTable[glyph_index];
-                if(glyph == null)
+                if (glyph == null)
                 {
                     continue;
                 }
-                if(glyph.m_GlyphRect.m_X == 0 && glyph.m_GlyphRect.m_Y == 0)
+                if (glyph.m_GlyphRect.m_X == 0 && glyph.m_GlyphRect.m_Y == 0)
                 {
                     continue;
                 }
                 bool is_inside_x = glyph.m_GlyphRect.m_X > myrect.m_X && glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width < myrect.m_X + myrect.m_Width;
                 bool is_inside_y = glyph.m_GlyphRect.m_Y > myrect.m_Y && glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height < myrect.m_Y + myrect.m_Height;
-                if(is_inside_x && is_inside_y)
+                if (is_inside_x && is_inside_y)
                 {
                     ret = ch;
                     break;
@@ -88,6 +176,53 @@ namespace V3UnityFontReader
             }
             pictureBox1.Refresh();
 
+        }
+
+        void VerifyUsedGlyphTable()
+        {
+            Debug.WriteLine("Old rects: " + font.m_UsedGlyphRects.Count);
+
+            List<GlyphRect> rects = new List<GlyphRect>();
+
+            foreach (GlyphRect gr in font.m_UsedGlyphRects)
+            {
+                if (gr.m_Width == 0 || gr.m_Height == 0)
+                {
+                    continue;
+                }
+                TMPCharacter ch = new TMPCharacter();
+                foreach (Glyph g in font.m_GlyphTable)
+                {
+                    foreach (TMPCharacter c in font.m_CharacterTable)
+                    {
+                        /*
+                        if (IsSpecial(c))
+                        {
+                            continue;
+                        }
+                        */
+
+                        if (c.m_GlyphIndex == g.m_Index)
+                        {
+                            bool is_x = g.m_GlyphRect.m_X > gr.m_X && g.m_GlyphRect.m_Width + g.m_GlyphRect.m_X < gr.m_X + gr.m_Width;
+                            bool is_y = g.m_GlyphRect.m_Y > gr.m_Y && g.m_GlyphRect.m_Height + g.m_GlyphRect.m_Y < gr.m_Y + gr.m_Height;
+                            if (is_x && is_y)
+                            {
+                                if (!rects.Contains(gr))
+                                {
+                                    rects.Add(gr);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                rects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
+            }
+
+            Debug.WriteLine("New rects: " + rects.Count);
+
+            font.m_UsedGlyphRects = rects;
         }
 
         void ReplaceAllGlyphs()
@@ -125,82 +260,112 @@ namespace V3UnityFontReader
                 MessageBox.Show(data, "The \"data\" folder couldn't be found!");
                 return;
             }
+            string images = Path.Combine(extfile, "images");
+            if (!Directory.Exists(images))
+            {
+                MessageBox.Show(images, "The \"images\" folder couldn't be found!");
+                return;
+            }
 
-            var files = Directory.GetFiles(data);
+            string[] data_files =
+            Directory.GetFiles(data, "*.txt", SearchOption.AllDirectories);
 
-            // Don't remember what this does but I'll leave it here
-            var orderedList = files
-           .OrderBy(x => new string(x.Where(char.IsLetter).ToArray()))
-           .ThenBy(x =>
-           {
+            var ordered_data = data_files
+            .OrderBy(x => new string(x.Where(char.IsLetter).ToArray()))
+            .ThenBy(x =>
+            {
                int number;
                if (int.TryParse(new string(x.Where(char.IsDigit).ToArray()), out number))
                    return number;
                return -1;
-           }).ToList();
+            }).ToList();
 
-            var files_len = files.Length;
-            if(files_len == 0)
+            string[] image_files =
+            Directory.GetFiles(images, "*.png", SearchOption.AllDirectories);
+
+            var ordered_images = image_files
+            .OrderBy(x => new string(x.Where(char.IsLetter).ToArray()))
+            .ThenBy(x =>
             {
-                MessageBox.Show(data, "The \"data\" folder is empty!");
-                return;
-            }
+                int number;
+                if (int.TryParse(new string(x.Where(char.IsDigit).ToArray()), out number))
+                    return number;
+                return -1;
+            }).ToList();
+
+            specials.Clear();
+
+            int cont_txt = 0;
+            total_red_data = 0;
+            total_red_image = 0;
+            total_red_glyphs = 0;
 
             font.m_GlyphTable = new List<Glyph>();
             font.m_CharacterTable = new List<TMPCharacter>();
+            font.m_UsedGlyphRects = new List<GlyphRect>();
 
-            for (int j = 0; j < files_len; j++)
+            // If we need to replace/add images we also need to read the data first
+            // or else it's going to read the data of the "default" file
+
+            foreach (string f in ordered_data)
             {
-                cur_index = j;
-                cur_filename = orderedList[j];
+                cur_index = total_red_data;
 
-                Debug.WriteLine(cur_filename);
-
-                if(!File.Exists(cur_filename))
-                {
-                    Debug.WriteLine("Does not exist: " + cur_filename);
-                    continue;
-                }
-
-                font.m_GlyphTable.Add(new Glyph());
-                font.m_CharacterTable.Add(new TMPCharacter());
-
-                ReplaceGlyphData();
-
-                // If we need to replace/add images we also need to read the data first
-                // or else it's going to read the data of the "default" file
-
-                rect = font.m_GlyphTable[cur_index].m_GlyphRect;
-                rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
-
-                ReplaceGlyphImage();
+                ReplaceGlyphData(f);
+                cont_txt++;
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
 
+            foreach(string f in ordered_images)
+            {
+                cur_index = total_red_image;
+                ReplaceGlyphImage(f);
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            Debug.WriteLine("TXT red: " + cont_txt);
+
             // Sort by m_Index / m_GlyphIndex
+
+            //DeleteUsedFreeGlyphs();
+
             font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
             font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+
+            VerifyUsedGlyphTable();
+
             cur_index = 0;
         }
 
-        void ReplaceGlyphData()
+        void ReplaceGlyphData(string path)
         {
-            string txtdata = cur_filename;
+            string txtdata = path;
             if (!File.Exists(txtdata))
             {
-                MessageBox.Show(txtdata, "File not found!");
+                //MessageBox.Show(txtdata, "File not found!");
                 return;
             }
 
             string[] content = File.ReadAllLines(txtdata);
-            int lines = content.Length;
-            if (lines != 17)
+            if(content == null)
             {
-                MessageBox.Show(txtdata, "Wrong number of lines (" + lines + ", expected 17)!");
+                MessageBox.Show(txtdata, "Null file!");
                 return;
             }
+
+            int lines = content.Length;
+            if (lines != 22)
+            {
+                MessageBox.Show(txtdata, "Wrong number of lines (" + lines + ", expected 22)!");
+                return;
+            }
+
+            font.m_GlyphTable.Add(new Glyph());
+            font.m_CharacterTable.Add(new TMPCharacter());
 
             // Read the .txt "line by line"
             using (StreamReader readtext = new StreamReader(txtdata))
@@ -223,11 +388,28 @@ namespace V3UnityFontReader
                 font.m_CharacterTable[cur_index].Read(content[15], 4);
                 font.m_CharacterTable[cur_index].Read(content[16], 5);
 
+                //VerifyCharacterTable();
+
                 //Debug.WriteLine(font.m_CharacterTable[cur_index].m_Unicode);
+
+                // Could be a special case without glyph like a space, \\r or \\n
+                if (!content[18].Contains("SPECIAL"))
+                {
+                    font.m_UsedGlyphRects.Add(new GlyphRect());
+                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[18], 2);
+                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[19], 3);
+                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[20], 4);
+                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[21], 5);
+                    total_red_glyphs++;
+                }
             }
+
+            rect = font.m_GlyphTable[cur_index].m_GlyphRect;
+            rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
+            total_red_data++;
         }
 
-        void ReplaceGlyphImage()
+        void ReplaceGlyphImage(string path)
         {
             if (rectangle.Width == 0 || rectangle.Height == 0)
             {
@@ -235,30 +417,13 @@ namespace V3UnityFontReader
             }
 
             int index = font.m_GlyphTable[cur_index].m_Index;
-            string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
-            if (!Directory.Exists(ext))
-            {
-                MessageBox.Show(ext, "Extracted files folder not found!");
-                return;
-            }
-            string extfile = Path.Combine(ext, Path.GetFileNameWithoutExtension(txt_fn));
-            if (!Directory.Exists(extfile))
-            {
-                MessageBox.Show(extfile, "This file hasn't been extracted yet!");
-                return;
-            }
-            string images = Path.Combine(extfile, "images");
-            if (!Directory.Exists(images))
-            {
-                MessageBox.Show(images, "The \"images\" folder couldn't be found!");
-                return;
-            }
-            string partial = Path.Combine(images, index.ToString()) + ".png";
+            string partial = path;
             if (!File.Exists(partial))
             {
-                MessageBox.Show(partial, "File not found!");
+                //MessageBox.Show(partial, "File not found!");
                 return;
             }
+
             using Bitmap partial_bmp = new Bitmap(partial);
             if (partial_bmp == null)
             {
@@ -275,6 +440,7 @@ namespace V3UnityFontReader
                 g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));
             }
             pictureBox1.Refresh();
+            total_red_image++;
         }
 
         void ExtractAllGlyphs()
@@ -313,6 +479,7 @@ namespace V3UnityFontReader
 
             var bak_charactertable = new List<TMPCharacter>(font.m_CharacterTable);
 
+            Debug.WriteLine("Special.size(): " + specials.Count);
             foreach (SpecialCharacter sc in specials)
             {
                 font.m_CharacterTable.Insert((int)sc.Position, sc.TCharacter);
@@ -341,6 +508,29 @@ namespace V3UnityFontReader
                 writetext.WriteLine("m_Unicode = " + character.m_Unicode.ToString());
                 writetext.WriteLine("m_GlyphIndex = " + character.m_GlyphIndex.ToString());
                 writetext.WriteLine("m_Scale = " + character.m_Scale.ToString());
+
+                writetext.WriteLine("____________________________________________________");
+
+                if (CanHaveUsedGlyph(character))
+                {
+                    int used_index = UsedGlyphRectByCharacter(character);
+                    if (used_index >= font.m_UsedGlyphRects.Count || used_index < 0)
+                    {
+                        Debug.WriteLine("Used GlyphRect not found for character: " + character.m_Unicode + ", with index: " + character.m_GlyphIndex + ", len: " + font.m_UsedGlyphRects.Count + ", index: " + used_index);
+                    }
+
+                    writetext.WriteLine("m_UsedGlyphRects.m_X = " + font.m_UsedGlyphRects[used_index].m_X.ToString());
+                    writetext.WriteLine("m_UsedGlyphRects.m_Y = " + font.m_UsedGlyphRects[used_index].m_Y.ToString());
+                    writetext.WriteLine("m_UsedGlyphRects.m_Width = " + font.m_UsedGlyphRects[used_index].m_Width.ToString());
+                    writetext.WriteLine("m_UsedGlyphRects.m_Height = " + font.m_UsedGlyphRects[used_index].m_Height.ToString());
+                }
+                else
+                {
+                    writetext.WriteLine("SPECIAL");
+                    writetext.WriteLine("SPECIAL");
+                    writetext.WriteLine("SPECIAL");
+                    writetext.WriteLine("SPECIAL");
+                }
             }
 
             font.m_CharacterTable = bak_charactertable;
@@ -348,6 +538,14 @@ namespace V3UnityFontReader
 
         void ExtractGlyphImage()
         {
+
+            string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
+            Directory.CreateDirectory(ext);
+            string extfile = Path.Combine(ext, Path.GetFileNameWithoutExtension(txt_fn));
+            Directory.CreateDirectory(extfile);
+            string images = Path.Combine(extfile, "images");
+            Directory.CreateDirectory(images);
+
             if (rectangle.Width == 0 || rectangle.Height == 0)
             {
                 return;
@@ -356,12 +554,6 @@ namespace V3UnityFontReader
             int index = font.m_GlyphTable[cur_index].m_Index;
             using Bitmap full_image = new Bitmap(png_fn);
             using Image portion = full_image.Clone(rectangle, full_image.PixelFormat);
-            string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
-            Directory.CreateDirectory(ext);
-            string extfile = Path.Combine(ext, Path.GetFileNameWithoutExtension(txt_fn));
-            Directory.CreateDirectory(extfile);
-            string images = Path.Combine(extfile, "images");
-            Directory.CreateDirectory(images);
             string newpng = Path.Combine(images, index.ToString()) + ".png";
             portion.Save(newpng, System.Drawing.Imaging.ImageFormat.Png);
             portion.Dispose();
@@ -470,9 +662,10 @@ namespace V3UnityFontReader
 
         int GetGlyphByIndex(uint index)
         {
+            //Debug.WriteLine("m_GlyphTable.Count: " + font.m_GlyphTable.Count);
             for (int i = 0; i < font.m_GlyphTable.Count; i++)
             {
-                if (index == font.m_GlyphTable[i].m_Index)
+                if (index == (uint)font.m_GlyphTable[i].m_Index)
                 {
                     return i;
                 }
@@ -511,13 +704,16 @@ namespace V3UnityFontReader
                     if (!specials.Contains(sc))
                     {
                         specials.Add(sc);
+                    } else
+                    {
+                        Debug.WriteLine("Duplicate special: " + character.m_Unicode);
                     }
 
                     Debug.WriteLine("Character is \\r or \\n");
                     continue;
                 }
 
-                Debug.WriteLine(cont + ": \"" + (char)character.m_Unicode + "\", unicode: " + (uint)character.m_Unicode);
+                //Debug.WriteLine(cont + ": \"" + (char)character.m_Unicode + "\", unicode: " + (uint)character.m_Unicode);
 
                 ret.Add(character);
                 cont++;
@@ -606,13 +802,14 @@ namespace V3UnityFontReader
                                         font.m_UsedGlyphRects[j].Read(line, k);
                                         i++;
                                     }
-                                } else
+                                }
+                                else
                                 {
-                                    if(last.Contains("m_FreeGlyphRects"))
+                                    if (last.Contains("m_FreeGlyphRects"))
                                     {
                                         font.m_FreeGlyphRects.Add(new GlyphRect());
                                         font.m_FreeGlyphRects[j] = new GlyphRect();
-                                        for(int k = 0; k < 6;k++)
+                                        for (int k = 0; k < 6; k++)
                                         {
                                             line = lines[base_i + k];
                                             txt_lines.Add(line);
@@ -634,6 +831,7 @@ namespace V3UnityFontReader
 
             Debug.WriteLine("GlyphTable.Count: " + font.m_GlyphTable.Count);
             Debug.WriteLine("CharacterTable.Count: " + font.m_CharacterTable.Count);
+            Debug.WriteLine("UsedGlyphRects.Count: " + font.m_UsedGlyphRects.Count);
 
             loaded_txt = true;
 
@@ -719,10 +917,13 @@ namespace V3UnityFontReader
 
             var bak_charactertable = new List<TMPCharacter>(font.m_CharacterTable);
 
+            Debug.WriteLine("Special.size(): " + specials.Count);
             foreach (SpecialCharacter sc in specials)
             {
                 font.m_CharacterTable.Insert((int)sc.Position, sc.TCharacter);
             }
+
+            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
 
             string last = "";
             for (int j = 0; j < txt_lines.Count; j++)
@@ -730,11 +931,15 @@ namespace V3UnityFontReader
                 if (txt_lines[j].Contains("int size ="))
                 {
                     int size = 0;
+                    string before_last = last.Substring(0, last.LastIndexOf("(") + 1);
+                    string after_last = " items)";
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].LastIndexOf("=") + 1 + 1); // Itself *and* space included
+
                     if (last.Contains("m_GlyphTable"))
                     {
                         size = font.m_GlyphTable.Count;
                         txt_lines[j] = before_equals + size.ToString();
+                        //txt_lines[j - 1] = before_last + size.ToString() + after_last;
                     }
                     else
                     {
@@ -742,6 +947,7 @@ namespace V3UnityFontReader
                         {
                             size = font.m_CharacterTable.Count;
                             txt_lines[j] = before_equals + size.ToString();
+                            //txt_lines[j - 1] = before_last + size.ToString() + after_last;
                         }
                         else
                         {
@@ -749,12 +955,16 @@ namespace V3UnityFontReader
                             {
                                 size = font.m_UsedGlyphRects.Count;
                                 txt_lines[j] = before_equals + size.ToString();
-                            } else
+                                //txt_lines[j - 1] = before_last + size.ToString() + after_last;
+                                Debug.WriteLine("Contains! Size: " + font.m_UsedGlyphRects.Count);
+                            }
+                            else
                             {
-                                if(last.Contains("m_FreeGlyphRects"))
+                                if (last.Contains("m_FreeGlyphRects"))
                                 {
                                     size = font.m_FreeGlyphRects.Count;
                                     txt_lines[j] = before_equals + size.ToString();
+                                    //txt_lines[j - 1] = before_last + size.ToString() + after_last;
                                 }
                             }
                         }
@@ -786,16 +996,18 @@ namespace V3UnityFontReader
                             {
                                 if (last.Contains("m_UsedGlyphRects"))
                                 {
+                                    Debug.WriteLine("m_UsedGlyphRects size: " + font.m_UsedGlyphRects.Count);
                                     for (int k = 0; k < 6; k++)
                                     {
-                                        txt_lines[j + k] = font.m_UsedGlyphRects[i].Write(txt_lines[j + k], k, i);
+                                        //txt_lines[j + k] = font.m_UsedGlyphRects[i].Write(txt_lines[j + k], k, i);
                                     }
                                     j += 6;
-                                } else
+                                }
+                                else
                                 {
-                                    if(last.Contains("m_FreeGlyphRects"))
+                                    if (last.Contains("m_FreeGlyphRects"))
                                     {
-                                        for(int k = 0; k< 6; k++)
+                                        for (int k = 0; k < 6; k++)
                                         {
                                             txt_lines[j + k] = font.m_FreeGlyphRects[i].Write(txt_lines[j + k], k, i);
                                         }
@@ -806,6 +1018,20 @@ namespace V3UnityFontReader
                         }
                     }
                 }
+
+                if (txt_lines[j].Contains("characterSequence"))
+                {
+                    string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
+                    before_equals += "\"";
+                    foreach(TMPCharacter c in bak_charactertable)
+                    {
+                        before_equals += (char)c.m_Unicode;
+                    }
+                    before_equals += "\\r\\n";
+                    before_equals += "\"";
+                    txt_lines[j] = before_equals;
+                }
+
                 last = txt_lines[j];
             }
 
