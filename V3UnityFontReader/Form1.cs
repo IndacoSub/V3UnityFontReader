@@ -393,7 +393,8 @@ namespace V3UnityFontReader
             GlyphRect used = font.m_UsedGlyphRects[u_pos];
 
             rect = used;
-            rectangle = new Rectangle(rect.m_X, InterpretY2(rect.m_Y), rect.m_Width, rect.m_Height);
+            // Using Y1 here is fine as we just declared that rect = used
+            rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
 
             if (rectangle.Width == 0 || rectangle.Height == 0)
             {
@@ -405,7 +406,8 @@ namespace V3UnityFontReader
             {
                 g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                 //g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY2(rect.m_Y));
+                // Using Y1 here is fine as we just declared that rect = used
+                g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));
             }
             pictureBox1.Refresh();
             total_red_image++;
