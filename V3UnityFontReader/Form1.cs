@@ -131,15 +131,16 @@ namespace V3UnityFontReader
 
             foreach (TMPCharacter ch in font.m_CharacterTable)
             {
-                //Debug.WriteLine("ch.Index: " + ch.m_GlyphIndex);
                 int glyph_index = GetGlyphByIndex(ch.m_GlyphIndex);
                 if (glyph_index == -1)
                 {
+                    Debug.WriteLine("Couldn't find glyph!");
                     continue;
                 }
                 Glyph glyph = font.m_GlyphTable[glyph_index];
                 if (glyph == null)
                 {
+                    Debug.WriteLine("Null glyph!");
                     continue;
                 }
                 if (glyph.m_GlyphRect.m_X == 0 && glyph.m_GlyphRect.m_Y == 0)
@@ -152,6 +153,27 @@ namespace V3UnityFontReader
                 {
                     ret = ch;
                     break;
+                } else
+                {
+                    /*
+                    if(!is_inside_x)
+                    {
+                        Debug.WriteLine("Wrong X math!");
+                        Debug.WriteLine("glyph.m_GlyphRect.m_X (" + glyph.m_GlyphRect.m_X + ") > myrect.m_X (" +
+                            myrect.m_X + ") && glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width (" +
+                            glyph.m_GlyphRect.m_Width + ") < myrect.m_X + myrect.m_Width (" + myrect.m_Width + ") = (" +
+                            (glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width) + " VS " + (myrect.m_X + myrect.m_Width) + ")"
+                            );
+                    } else
+                    {
+                        Debug.WriteLine("Wrong Y math!");
+                        Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") > myrect.m_Y (" +
+                            myrect.m_Y + ") && glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height (" +
+                            glyph.m_GlyphRect.m_Height + ") < myrect.m_Y + myrect.m_Height (" + myrect.m_Height + ") = (" +
+                            (glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height) + " VS " + (myrect.m_Y + myrect.m_Height) + ")"
+                            );
+                    }
+                    */
                 }
             }
 
@@ -387,7 +409,7 @@ namespace V3UnityFontReader
             int u_pos = UsedGlyphRectByCharacter(ch);
             if (u_pos == -1)
             {
-                Debug.WriteLine("Couldn't find corresponding used glyph for character: " + ch.m_Unicode + ", index: " + ch.m_GlyphIndex);
+                Debug.WriteLine("Couldn't find corresponding used glyph for character: " + ch.m_Unicode + " (" + (char)ch.m_Unicode + "), index: " + ch.m_GlyphIndex + " (a.k.a. probably wrong coordinates?)");
                 return;
             }
             GlyphRect used = font.m_UsedGlyphRects[u_pos];
@@ -472,6 +494,7 @@ namespace V3UnityFontReader
                     font.m_UsedGlyphRects[total_red_glyphs].Read(content[19], 3);
                     font.m_UsedGlyphRects[total_red_glyphs].Read(content[20], 4);
                     font.m_UsedGlyphRects[total_red_glyphs].Read(content[21], 5);
+
                     total_red_glyphs++;
                 }
             }
@@ -819,7 +842,10 @@ namespace V3UnityFontReader
                 index +
                 ", character: \"" +
                 c +
-                "\", X: " +
+                "\" (" +
+                character.m_Unicode +
+                ")" +
+                ", X: " +
                 x +
                 ", Y: " +
                 y +
@@ -831,7 +857,7 @@ namespace V3UnityFontReader
                 ", cH: " +
                 rect.m_Height
                 ;
-            //textBox1.Text = "Inside is: " + (char)WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + ", X: " + font.m_UsedGlyphRects[cur_index].m_X + ", Y: " + InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y);
+            //textBox1.Text = "Index: " + cur_index + ", inside is: " + (char)WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + " (" + WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + "), X: " + font.m_UsedGlyphRects[cur_index].m_X + ", Y: " + InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y);
             textBox1.Update();
             textBox1.Refresh();
 
@@ -872,10 +898,11 @@ namespace V3UnityFontReader
 
         int GetGlyphByIndex(uint index)
         {
+            //Debug.WriteLine("Index: " + index);
             //Debug.WriteLine("m_GlyphTable.Count: " + font.m_GlyphTable.Count);
             for (int i = 0; i < font.m_GlyphTable.Count; i++)
             {
-                if (index == (uint)font.m_GlyphTable[i].m_Index)
+                if (index == font.m_GlyphTable[i].m_Index)
                 {
                     return i;
                 }
@@ -1407,6 +1434,23 @@ namespace V3UnityFontReader
             textBox2.Text = "";
             textBox3.Text = "";
             textBox4.Text = "";
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+            if(textBox5.Text.Length > 1)
+            {
+                return;
+            }
+
+            if(textBox5.Text.Length <= 0)
+            {
+                return;
+            }
+
+            char c = textBox5.Text[0];
+            textBox6.Text = "";
+            textBox6.Text += ((uint)c).ToString();
         }
     }
 }
