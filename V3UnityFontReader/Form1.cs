@@ -49,10 +49,11 @@ namespace V3UnityFontReader
             {
                 foreach (GlyphRect free in font.m_FreeGlyphRects)
                 {
-                    Rectangle usedrect = new Rectangle(used.m_X, used.m_Y, used.m_Width, used.m_Height);
-                    Rectangle freerect = new Rectangle(free.m_X, free.m_Y, free.m_Width, free.m_Height);
+                    Rectangle usedrect = new Rectangle(used.m_X, pictureBox1.Image.Size.Height - used.m_Y - used.m_Height, used.m_Width, used.m_Height);
+                    Rectangle freerect = new Rectangle(free.m_X, pictureBox1.Image.Size.Height - free.m_Y - free.m_Height, free.m_Width, free.m_Height);
                     if (usedrect.IntersectsWith(freerect) || freerect.IntersectsWith(usedrect))
                     {
+                        Debug.WriteLine("Intersects!");
                         continue;
                     }
 
@@ -147,33 +148,40 @@ namespace V3UnityFontReader
                 {
                     continue;
                 }
-                bool is_inside_x = glyph.m_GlyphRect.m_X > myrect.m_X && glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width < myrect.m_X + myrect.m_Width;
-                bool is_inside_y = glyph.m_GlyphRect.m_Y > myrect.m_Y && glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height < myrect.m_Y + myrect.m_Height;
+                bool is_inside_x = (glyph.m_GlyphRect.m_X > myrect.m_X) && (glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width < myrect.m_X + myrect.m_Width);
+                bool is_inside_y = (glyph.m_GlyphRect.m_Y > myrect.m_Y) && (glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height < myrect.m_Y + myrect.m_Height);
                 if (is_inside_x && is_inside_y)
                 {
                     ret = ch;
                     break;
                 } else
                 {
-                    /*
+                    const bool debug = false;
+                    const int DESIRED_GRECT_X = 0;
+                    const int DESIRED_URECT_X = 0;
+                    const int DESIRED_URECT_Y = 0;
+                    if(debug && glyph.m_GlyphRect.m_X == DESIRED_GRECT_X && myrect.m_X == DESIRED_URECT_X && myrect.m_Y == DESIRED_URECT_Y)
                     if(!is_inside_x)
                     {
                         Debug.WriteLine("Wrong X math!");
                         Debug.WriteLine("glyph.m_GlyphRect.m_X (" + glyph.m_GlyphRect.m_X + ") > myrect.m_X (" +
-                            myrect.m_X + ") && glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width (" +
+                            myrect.m_X + ")    &&    glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width (" +
                             glyph.m_GlyphRect.m_Width + ") < myrect.m_X + myrect.m_Width (" + myrect.m_Width + ") = (" +
                             (glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width) + " VS " + (myrect.m_X + myrect.m_Width) + ")"
                             );
                     } else
                     {
-                        Debug.WriteLine("Wrong Y math!");
-                        Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") > myrect.m_Y (" +
-                            myrect.m_Y + ") && glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height (" +
-                            glyph.m_GlyphRect.m_Height + ") < myrect.m_Y + myrect.m_Height (" + myrect.m_Height + ") = (" +
-                            (glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height) + " VS " + (myrect.m_Y + myrect.m_Height) + ")"
-                            );
+                        if(!is_inside_y)
+                        {
+                                Debug.WriteLine("Wrong Y math!");
+                                Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") > myrect.m_Y (" +
+                                    myrect.m_Y + ")    &&    glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") + glyph.m_GlyphRect.m_Height (" +
+                                    glyph.m_GlyphRect.m_Height + ") < myrect.m_Y (" + myrect.m_Y + ") + myrect.m_Height (" + myrect.m_Height + ") = (" +
+                                    (glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height) + " VS " + (myrect.m_Y + myrect.m_Height) + ")"
+                                    );
+                                //Debug.WriteLine("Suggestion?: myrect.m_Y could be: " + (glyph.m_GlyphRect.m_Y + (glyph.m_GlyphRect.m_Height / 2)));
+                        }
                     }
-                    */
                 }
             }
 
@@ -238,9 +246,9 @@ namespace V3UnityFontReader
                         }
                     }
                 }
-
-                rects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
             }
+
+            rects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
 
             Debug.WriteLine("New rects: " + rects.Count);
 
@@ -336,7 +344,7 @@ namespace V3UnityFontReader
             font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
             font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
             VerifyCharacterTable();
-            VerifyUsedGlyphTable();
+            //VerifyUsedGlyphTable();
 
             cur_index = 0;
 
@@ -397,6 +405,7 @@ namespace V3UnityFontReader
             //Debug.WriteLine("1: " + glyph_index);
             glyph_index = glyph_index.Substring(0, glyph_index.IndexOf('.'));
             //Debug.WriteLine("2: " + glyph_index);
+            Debug.WriteLine("Glyph index: " + glyph_index);
             int glyph_index_int = int.Parse(glyph_index);
             int pos = GetGlyphByIndex((uint)glyph_index_int);
             if (pos == -1)
@@ -1168,6 +1177,8 @@ namespace V3UnityFontReader
 
             font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
 
+            DeleteUsedFreeGlyphs();
+
             string last = "";
             int lines_count = txt_lines.Count;
             for (int j = 0; j < lines_count; j++)
@@ -1292,9 +1303,146 @@ namespace V3UnityFontReader
             File.WriteAllLines(filename, txt_lines);
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void pictureBox1_Click(object sender, MouseEventArgs e)
         {
+            if(!loaded_png || !loaded_txt)
+            {
+                return;
+            }
 
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "*.TXT files|*.txt";
+            ofd.Multiselect = false;
+            ofd.Title = "Open .TXT file";
+            if (ofd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            string txtdata = ofd.FileName;
+            if (!File.Exists(txtdata))
+            {
+                MessageBox.Show(txtdata, "File not found!");
+                return;
+            }
+
+            string[] content = File.ReadAllLines(txtdata);
+            if (content == null)
+            {
+                MessageBox.Show(txtdata, "Null file!");
+                return;
+            }
+
+            int lines = content.Length;
+            if (lines != 22)
+            {
+                MessageBox.Show(txtdata, "Wrong number of lines (" + lines + ", expected 22)!");
+                return;
+            }
+
+            TMPCharacter character = new TMPCharacter();
+            Glyph glyph = new Glyph();
+            GlyphRect urect = new GlyphRect();
+
+            // Read the .txt "line by line"
+            using (StreamReader readtext = new StreamReader(txtdata))
+            {
+                glyph.Read(content[0], 2);
+                glyph.Read(content[1], 4);
+                glyph.Read(content[2], 5);
+                glyph.Read(content[3], 6);
+                glyph.Read(content[4], 7);
+                glyph.Read(content[5], 8);
+                glyph.Read(content[6], 10);
+                glyph.Read(content[7], 11);
+                glyph.Read(content[8], 12);
+                glyph.Read(content[9], 13);
+                glyph.Read(content[10], 14);
+                glyph.Read(content[11], 15);
+
+                character.Read(content[13], 2);
+                character.Read(content[14], 3);
+                character.Read(content[15], 4);
+                character.Read(content[16], 5);
+
+                //VerifyCharacterTable();
+
+                //Debug.WriteLine(font.m_CharacterTable[cur_index].m_Unicode);
+
+                // Could be a special case without glyph like a space, \\r or \\n
+                if (!content[18].Contains("SPECIAL"))
+                {
+                    urect.Read(content[18], 2);
+                    urect.Read(content[19], 3);
+                    urect.Read(content[20], 4);
+                    urect.Read(content[21], 5);
+                }
+            }
+
+            if(urect == null || urect == new GlyphRect())
+            {
+                Debug.WriteLine("Null rect!");
+                return;
+            }
+
+            string image = Directory.GetCurrentDirectory();
+            image = Path.Combine(image, "extracted", Path.GetFileNameWithoutExtension(txt_fn), "images");
+            image = Path.Combine(image, character.m_GlyphIndex + ".png");
+            if(!File.Exists(image))
+            {
+                Debug.WriteLine("PNG image not found: " + image);
+                return;
+            }
+
+            string uglyph_image = Directory.GetCurrentDirectory();
+            uglyph_image = Path.Combine(uglyph_image, "extracted", Path.GetFileNameWithoutExtension(txt_fn), "used_glyphs");
+            uglyph_image = Path.Combine(uglyph_image, character.m_GlyphIndex + ".png");
+            if(!File.Exists(uglyph_image))
+            {
+                Debug.WriteLine("Used PNG image not found: " + uglyph_image);
+                return;
+            }
+
+            Bitmap used_gfx = new Bitmap(uglyph_image);
+            urect.m_Width = used_gfx.Width;
+            urect.m_Height = used_gfx.Height;
+            urect.m_X = e.X;
+            urect.m_Y = e.Y;
+
+            Bitmap glyph_gfx = new Bitmap(image);
+            glyph.m_GlyphRect.m_Width = glyph_gfx.Width + 1;
+            glyph.m_GlyphRect.m_Height = glyph_gfx.Height;
+            glyph.m_GlyphRect.m_X = urect.m_X;
+            glyph.m_GlyphRect.m_Y = urect.m_Y;
+            bool is_x_odd = ((urect.m_Width - glyph.m_GlyphRect.m_Width) / 2) % 2 != 0;
+            bool is_y_odd = ((urect.m_Height - glyph.m_GlyphRect.m_Height) / 2) % 2 != 0;
+            Debug.WriteLine("Is X odd: " + is_x_odd);
+            Debug.WriteLine("Is Y odd: " + is_y_odd);
+            glyph.m_GlyphRect.m_X = (urect.m_X + (urect.m_Width - glyph.m_GlyphRect.m_Width) / 2) + (is_x_odd ? 0 : 0);
+            glyph.m_GlyphRect.m_Y = (urect.m_Y + (urect.m_Height - glyph.m_GlyphRect.m_Height) / 2) + (is_y_odd ? 0 : 0);
+            //glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - urect.m_Height - glyph.m_GlyphRect.m_Height;
+
+            Rectangle uRectangle = new Rectangle(urect.m_X, urect.m_Y, urect.m_Width, urect.m_Height);
+            Rectangle gRectangle = new Rectangle(glyph.m_GlyphRect.m_X, glyph.m_GlyphRect.m_Y, glyph.m_GlyphRect.m_Width, glyph.m_GlyphRect.m_Height);
+
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                g.DrawImage(used_gfx, uRectangle);
+                g.DrawImage(glyph_gfx, gRectangle);
+            }
+            pictureBox1.Refresh();
+
+            glyph.m_GlyphRect.m_Height = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
+
+            font.m_CharacterTable.Add(character);
+            font.m_GlyphTable.Add(glyph);
+            font.m_UsedGlyphRects.Add(urect);
+
+            font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
+            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+            font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -1386,6 +1534,7 @@ namespace V3UnityFontReader
                     int toint = int.Parse(textBox2.Text);
                     textBox3.Text = InterpretY(toint).ToString();
                     textBox4.Text = InterpretY2(toint).ToString();
+                    //textBox4.Text = (pictureBox1.Size.Height - toint).ToString();
                 }
                 else
                 {
