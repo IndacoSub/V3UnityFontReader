@@ -1410,6 +1410,7 @@ namespace V3UnityFontReader
             urect.m_Y = e.Y;
 
             Bitmap glyph_gfx = new Bitmap(image);
+            // The +1 is needed, not sure why that is
             glyph.m_GlyphRect.m_Width = glyph_gfx.Width + 1;
             glyph.m_GlyphRect.m_Height = glyph_gfx.Height;
             glyph.m_GlyphRect.m_X = urect.m_X;
