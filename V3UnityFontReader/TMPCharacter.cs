@@ -42,43 +42,36 @@ namespace V3UnityFontReader
             }
         }
 
-        public string Write(string str, int index, int param)
+        public string Write(int index, int param)
         {
-            string ret = str;
+            string ret = "";
             string before = "";
             string after = "";
-            if (index == 0)
-            {
-                before = str.Substring(0, str.LastIndexOf("[") + 1);
-                after = "]";
-            }
-            else
-            {
-                if (index == 1)
-                {
-                    Debug.WriteLine(str);
-                }
-                before = str.Substring(0, str.LastIndexOf("=") + 1 + 1);
-                after = "";
-            }
 
             switch (index)
             {
                 case 0:
+                    before = "  [";
+                    after = "]";
                     ret = before + param + after;
                     break;
                 case 1:
+                    ret = "   0 TMP_Character m_CharacterTable";
                     break;
                 case 2:
+                    before = "    0 int m_ElementType = ";
                     ret = before + m_ElementType;
                     break;
                 case 3:
+                    before = "    0 unsigned int m_Unicode = ";
                     ret = before + m_Unicode;
                     break;
                 case 4:
+                    before = "    0 unsigned int m_GlyphIndex = ";
                     ret = before + m_GlyphIndex;
                     break;
                 case 5:
+                    before = "    0 float m_Scale = ";
                     ret = before + m_Scale;
                     break;
                 default:
