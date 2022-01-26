@@ -1290,6 +1290,18 @@ namespace V3UnityFontReader
                     }
                 }
 
+                if(txt_lines[j].Contains("  0 int atlasWidth = "))
+                {
+                    string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
+                    txt_lines[j] = before_equals + pictureBox1.Image.Size.Width.ToString();
+                }
+
+                if(txt_lines[j].Contains(" 0 int m_AtlasWidth = "))
+                {
+                    string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
+                    txt_lines[j] = before_equals + pictureBox1.Image.Size.Width.ToString();
+                }
+
                 if (txt_lines[j].Contains("characterSequence"))
                 {
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
