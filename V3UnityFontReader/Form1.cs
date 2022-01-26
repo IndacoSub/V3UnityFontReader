@@ -1434,7 +1434,7 @@ namespace V3UnityFontReader
             }
             pictureBox1.Refresh();
 
-            glyph.m_GlyphRect.m_Height = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
 
             font.m_CharacterTable.Add(character);
