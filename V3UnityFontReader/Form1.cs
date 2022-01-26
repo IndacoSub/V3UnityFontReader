@@ -1176,6 +1176,11 @@ namespace V3UnityFontReader
             }
 
             font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+            font.m_CharacterTable = font.m_CharacterTable.Distinct().ToList();
+
+            font.m_GlyphTable = font.m_GlyphTable.Distinct().ToList();
+
+            font.m_UsedGlyphRects = font.m_UsedGlyphRects.Distinct().ToList();
 
             DeleteUsedFreeGlyphs();
 
@@ -1437,9 +1442,20 @@ namespace V3UnityFontReader
             glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
 
-            font.m_CharacterTable.Add(character);
-            font.m_GlyphTable.Add(glyph);
-            font.m_UsedGlyphRects.Add(urect);
+            if(!font.m_CharacterTable.Contains(character))
+            {
+                font.m_CharacterTable.Add(character);
+            }
+
+            if(!font.m_GlyphTable.Contains(glyph))
+            {
+                font.m_GlyphTable.Add(glyph);
+            }
+
+            if (!font.m_UsedGlyphRects.Contains(urect))
+            {
+                font.m_UsedGlyphRects.Add(urect);
+            }
 
             font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
             font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
