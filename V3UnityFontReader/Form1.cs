@@ -1172,10 +1172,13 @@ namespace V3UnityFontReader
             Debug.WriteLine("Special.size(): " + specials.Count);
             foreach (SpecialCharacter sc in specials)
             {
-                font.m_CharacterTable.Insert((int)sc.Position, sc.TCharacter);
+                if(!font.m_CharacterTable.Contains(sc.TCharacter))
+                {
+                    font.m_CharacterTable.Insert((int)sc.Position, sc.TCharacter);
+                }
             }
 
-            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+            font.m_CharacterTable.Sort((x, y) => x.m_Unicode.CompareTo(y.m_Unicode));
             font.m_CharacterTable = font.m_CharacterTable.Distinct().ToList();
 
             font.m_GlyphTable = font.m_GlyphTable.Distinct().ToList();
