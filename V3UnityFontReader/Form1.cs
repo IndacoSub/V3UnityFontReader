@@ -1444,6 +1444,54 @@ namespace V3UnityFontReader
             font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
             font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
             font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "*.TXT files|*.txt";
+            saveFileDialog.Title = "Save file as .TXT (if you want)";
+            saveFileDialog.FileName = txtdata;
+            if(saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            using (StreamWriter writetext = new StreamWriter(saveFileDialog.FileName))
+            {
+                writetext.WriteLine("m_Index = " + glyph.m_Index.ToString());
+                writetext.WriteLine("m_Metrics.m_Width = " + glyph.m_Metrics.m_Width.ToString());
+                writetext.WriteLine("m_Metrics.m_Height = " + glyph.m_Metrics.m_Height.ToString());
+                writetext.WriteLine("m_Metrics.m_HorizontalBearingX = " + glyph.m_Metrics.m_HorizontalBearingX.ToString());
+                writetext.WriteLine("m_Metrics.m_HorizontalBearingY = " + glyph.m_Metrics.m_HorizontalBearingY.ToString());
+                writetext.WriteLine("m_Metrics.m_HorizontalAdvance = " + glyph.m_Metrics.m_HorizontalAdvance.ToString());
+                writetext.WriteLine("m_GlyphRect.m_X = " + glyph.m_GlyphRect.m_X.ToString());
+                writetext.WriteLine("m_GlyphRect.m_Y = " + glyph.m_GlyphRect.m_Y.ToString());
+                writetext.WriteLine("m_GlyphRect.m_Width = " + glyph.m_GlyphRect.m_Width.ToString());
+                writetext.WriteLine("m_GlyphRect.m_Height = " + glyph.m_GlyphRect.m_Height.ToString());
+                writetext.WriteLine("m_Scale = " + glyph.m_Scale.ToString());
+                writetext.WriteLine("m_AtlasIndex = " + glyph.m_AtlasIndex.ToString());
+
+                writetext.WriteLine("____________________________________________________");
+
+                writetext.WriteLine("m_ElementType = " + character.m_ElementType.ToString());
+                writetext.WriteLine("m_Unicode = " + character.m_Unicode.ToString());
+                writetext.WriteLine("m_GlyphIndex = " + character.m_GlyphIndex.ToString());
+                writetext.WriteLine("m_Scale = " + character.m_Scale.ToString());
+
+                writetext.WriteLine("____________________________________________________");
+
+                if (!IsSpecial(character))
+                {
+                    writetext.WriteLine("m_UsedGlyphRects.m_X = " + urect.m_X.ToString());
+                    writetext.WriteLine("m_UsedGlyphRects.m_Y = " + urect.m_Y.ToString());
+                    writetext.WriteLine("m_UsedGlyphRects.m_Width = " + urect.m_Width.ToString());
+                    writetext.WriteLine("m_UsedGlyphRects.m_Height = " + urect.m_Height.ToString());
+                } else
+                {
+                    writetext.WriteLine("SPECIAL");
+                    writetext.WriteLine("SPECIAL");
+                    writetext.WriteLine("SPECIAL");
+                    writetext.WriteLine("SPECIAL");
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
