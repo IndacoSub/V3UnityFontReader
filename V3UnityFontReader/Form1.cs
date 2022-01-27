@@ -1433,36 +1433,40 @@ namespace V3UnityFontReader
                 return;
             }
 
-            Bitmap used_gfx = new Bitmap(uglyph_image);
-            urect.m_Width = used_gfx.Width;
-            urect.m_Height = used_gfx.Height;
-            urect.m_X = e.X;
-            urect.m_Y = e.Y;
-
-            Bitmap glyph_gfx = new Bitmap(image);
-            // The +1 is needed, not sure why that is
-            glyph.m_GlyphRect.m_Width = glyph_gfx.Width + 1;
-            glyph.m_GlyphRect.m_Height = glyph_gfx.Height;
-            glyph.m_GlyphRect.m_X = urect.m_X;
-            glyph.m_GlyphRect.m_Y = urect.m_Y;
-            bool is_x_odd = ((urect.m_Width - glyph.m_GlyphRect.m_Width) / 2) % 2 != 0;
-            bool is_y_odd = ((urect.m_Height - glyph.m_GlyphRect.m_Height) / 2) % 2 != 0;
-            Debug.WriteLine("Is X odd: " + is_x_odd);
-            Debug.WriteLine("Is Y odd: " + is_y_odd);
-            glyph.m_GlyphRect.m_X = (urect.m_X + (urect.m_Width - glyph.m_GlyphRect.m_Width) / 2) + (is_x_odd ? 0 : 0);
-            glyph.m_GlyphRect.m_Y = (urect.m_Y + (urect.m_Height - glyph.m_GlyphRect.m_Height) / 2) + (is_y_odd ? 0 : 0);
-            //glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - urect.m_Height - glyph.m_GlyphRect.m_Height;
-
-            Rectangle uRectangle = new Rectangle(urect.m_X, urect.m_Y, urect.m_Width, urect.m_Height);
-            Rectangle gRectangle = new Rectangle(glyph.m_GlyphRect.m_X, glyph.m_GlyphRect.m_Y, glyph.m_GlyphRect.m_Width, glyph.m_GlyphRect.m_Height);
-
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            using (Bitmap used_gfx = new Bitmap(uglyph_image))
             {
-                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                g.DrawImage(used_gfx, uRectangle);
-                g.DrawImage(glyph_gfx, gRectangle);
+                urect.m_Width = used_gfx.Width;
+                urect.m_Height = used_gfx.Height;
+                urect.m_X = e.X;
+                urect.m_Y = e.Y;
+
+                using (Bitmap glyph_gfx = new Bitmap(image))
+                {
+                    // The +1 is needed, not sure why that is
+                    glyph.m_GlyphRect.m_Width = glyph_gfx.Width + 1;
+                    glyph.m_GlyphRect.m_Height = glyph_gfx.Height;
+                    glyph.m_GlyphRect.m_X = urect.m_X;
+                    glyph.m_GlyphRect.m_Y = urect.m_Y;
+                    bool is_x_odd = ((urect.m_Width - glyph.m_GlyphRect.m_Width) / 2) % 2 != 0;
+                    bool is_y_odd = ((urect.m_Height - glyph.m_GlyphRect.m_Height) / 2) % 2 != 0;
+                    Debug.WriteLine("Is X odd: " + is_x_odd);
+                    Debug.WriteLine("Is Y odd: " + is_y_odd);
+                    glyph.m_GlyphRect.m_X = (urect.m_X + (urect.m_Width - glyph.m_GlyphRect.m_Width) / 2) + (is_x_odd ? 0 : 0);
+                    glyph.m_GlyphRect.m_Y = (urect.m_Y + (urect.m_Height - glyph.m_GlyphRect.m_Height) / 2) + (is_y_odd ? 0 : 0);
+                    //glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - urect.m_Height - glyph.m_GlyphRect.m_Height;
+
+                    Rectangle uRectangle = new Rectangle(urect.m_X, urect.m_Y, urect.m_Width, urect.m_Height);
+                    Rectangle gRectangle = new Rectangle(glyph.m_GlyphRect.m_X, glyph.m_GlyphRect.m_Y, glyph.m_GlyphRect.m_Width, glyph.m_GlyphRect.m_Height);
+
+                    using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+                    {
+                        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                        g.DrawImage(used_gfx, uRectangle);
+                        g.DrawImage(glyph_gfx, gRectangle);
+                    }
+                    pictureBox1.Refresh();
+                }
             }
-            pictureBox1.Refresh();
 
             glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
