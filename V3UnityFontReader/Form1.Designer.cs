@@ -59,10 +59,10 @@ namespace V3UnityFontReader
             // 
             this.pictureBox1.Location = new System.Drawing.Point(0, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(868, 573);
+            this.pictureBox1.Size = new System.Drawing.Size(1022, 573);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseClick += new MouseEventHandler(this.pictureBox1_Click);
+            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_Click);
             // 
             // button1
             // 
@@ -109,7 +109,7 @@ namespace V3UnityFontReader
             this.textBox1.Location = new System.Drawing.Point(330, 588);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(528, 23);
+            this.textBox1.Size = new System.Drawing.Size(681, 23);
             this.textBox1.TabIndex = 5;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
@@ -157,13 +157,13 @@ namespace V3UnityFontReader
             // 
             this.textBox2.Location = new System.Drawing.Point(331, 632);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(79, 23);
+            this.textBox2.Size = new System.Drawing.Size(95, 23);
             this.textBox2.TabIndex = 10;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(416, 635);
+            this.label1.Location = new System.Drawing.Point(432, 635);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(31, 15);
             this.label1.TabIndex = 11;
@@ -171,22 +171,22 @@ namespace V3UnityFontReader
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(453, 632);
+            this.textBox3.Location = new System.Drawing.Point(469, 632);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(93, 23);
+            this.textBox3.Size = new System.Drawing.Size(112, 23);
             this.textBox3.TabIndex = 12;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(589, 632);
+            this.textBox4.Location = new System.Drawing.Point(624, 632);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(96, 23);
+            this.textBox4.Size = new System.Drawing.Size(118, 23);
             this.textBox4.TabIndex = 13;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(552, 635);
+            this.label2.Location = new System.Drawing.Point(587, 635);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(31, 15);
             this.label2.TabIndex = 14;
@@ -195,7 +195,7 @@ namespace V3UnityFontReader
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(331, 614);
+            this.label3.Location = new System.Drawing.Point(355, 614);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(57, 15);
             this.label3.TabIndex = 15;
@@ -204,7 +204,7 @@ namespace V3UnityFontReader
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(453, 614);
+            this.label4.Location = new System.Drawing.Point(482, 614);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(89, 15);
             this.label4.TabIndex = 16;
@@ -214,7 +214,7 @@ namespace V3UnityFontReader
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(589, 614);
+            this.label5.Location = new System.Drawing.Point(637, 614);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 15);
             this.label5.TabIndex = 17;
@@ -223,7 +223,7 @@ namespace V3UnityFontReader
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(691, 614);
+            this.button9.Location = new System.Drawing.Point(779, 613);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(72, 23);
             this.button9.TabIndex = 18;
@@ -233,7 +233,7 @@ namespace V3UnityFontReader
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(691, 639);
+            this.button10.Location = new System.Drawing.Point(779, 638);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(72, 23);
             this.button10.TabIndex = 19;
@@ -243,7 +243,7 @@ namespace V3UnityFontReader
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(769, 614);
+            this.textBox5.Location = new System.Drawing.Point(880, 614);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 23);
             this.textBox5.TabIndex = 20;
@@ -251,7 +251,7 @@ namespace V3UnityFontReader
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(769, 639);
+            this.textBox6.Location = new System.Drawing.Point(880, 638);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
             this.textBox6.Size = new System.Drawing.Size(100, 23);
@@ -261,7 +261,7 @@ namespace V3UnityFontReader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(870, 674);
+            this.ClientSize = new System.Drawing.Size(1023, 674);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.button10);

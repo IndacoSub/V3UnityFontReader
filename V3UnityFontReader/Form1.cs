@@ -1330,6 +1330,16 @@ namespace V3UnityFontReader
                 return;
             }
 
+            if(e.X > pictureBox1.Image.Size.Width)
+            {
+                return;
+            }
+
+            if(e.Y > pictureBox1.Image.Size.Height)
+            {
+                return;
+            }
+
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "*.TXT files|*.txt";
             ofd.Multiselect = false;
