@@ -1191,6 +1191,7 @@ namespace V3UnityFontReader
             int lines_count = txt_lines.Count;
             for (int j = 0; j < lines_count; j++)
             {
+                //Debug.WriteLine("j: " + j + ", lines_count: " + lines_count);
                 if (txt_lines[j].Contains("int size ="))
                 {
                     int size = 0;
@@ -1198,12 +1199,21 @@ namespace V3UnityFontReader
                     string after_last = " items)";
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].LastIndexOf("=") + 1 + 1); // Itself *and* space included
 
+                    int red_size = int.Parse(txt_lines[j].Substring(before_equals.Length));
+                    if(red_size <= 0)
+                    {
+                        last = txt_lines[j];
+                        continue;
+                    }
+
                     if (last.Contains("m_GlyphTable"))
                     {
                         size = font.m_GlyphTable.Count;
                         txt_lines[j] = before_equals + size.ToString();
                         txt_lines[j - 1] = before_last + size.ToString() + after_last;
                         txt_lines.RemoveRange(j + 1, 16 * original_txt_glyph_size);
+                        lines_count -= 16 * original_txt_glyph_size;
+                        j++;
                     }
                     else
                     {
@@ -1213,6 +1223,8 @@ namespace V3UnityFontReader
                             txt_lines[j] = before_equals + size.ToString();
                             txt_lines[j - 1] = before_last + size.ToString() + after_last;
                             txt_lines.RemoveRange(j + 1, 6 * original_txt_ctable_size);
+                            lines_count -= 6 * original_txt_ctable_size;
+                            j++;
                         }
                         else
                         {
@@ -1223,6 +1235,8 @@ namespace V3UnityFontReader
                                 txt_lines[j - 1] = before_last + size.ToString() + after_last;
                                 Debug.WriteLine("Contains! Size: " + font.m_UsedGlyphRects.Count);
                                 txt_lines.RemoveRange(j + 1, 6 * original_txt_usedglyph_size);
+                                lines_count -= 6 * original_txt_usedglyph_size;
+                                j++;
                             }
                             else
                             {
@@ -1232,12 +1246,12 @@ namespace V3UnityFontReader
                                     txt_lines[j] = before_equals + size.ToString();
                                     txt_lines[j - 1] = before_last + size.ToString() + after_last;
                                     txt_lines.RemoveRange(j + 1, 6 * original_txt_freeglyph_size);
+                                    lines_count -= 6 * original_txt_freeglyph_size;
+                                    j++;
                                 }
                             }
                         }
                     }
-
-                    j++;
 
                     for (int i = 0; i < size; i++)
                     {
@@ -1249,6 +1263,7 @@ namespace V3UnityFontReader
                                 txt_lines[j + k] = font.m_GlyphTable[i].Write(k, i);
                             }
                             j += 16;
+                            lines_count += 16;
                         }
                         else
                         {
@@ -1260,18 +1275,20 @@ namespace V3UnityFontReader
                                     txt_lines[j + k] = font.m_CharacterTable[i].Write(k, i);
                                 }
                                 j += 6;
+                                lines_count += 6;
                             }
                             else
                             {
                                 if (last.Contains("m_UsedGlyphRects"))
                                 {
-                                    Debug.WriteLine("m_UsedGlyphRects size: " + font.m_UsedGlyphRects.Count);
+                                    //Debug.WriteLine("m_UsedGlyphRects size: " + font.m_UsedGlyphRects.Count);
                                     for (int k = 0; k < 6; k++)
                                     {
                                         txt_lines.Insert(j + k, "");
                                         txt_lines[j + k] = font.m_UsedGlyphRects[i].Write(k, i, false);
                                     }
                                     j += 6;
+                                    lines_count += 6;
                                 }
                                 else
                                 {
@@ -1283,6 +1300,7 @@ namespace V3UnityFontReader
                                             txt_lines[j + k] = font.m_FreeGlyphRects[i].Write(k, i, true);
                                         }
                                         j += 6;
+                                        lines_count += 6;
                                     }
                                 }
                             }
@@ -1290,14 +1308,11 @@ namespace V3UnityFontReader
                     }
                 }
 
-                if(txt_lines[j].Contains("  0 int atlasWidth = "))
-                {
-                    string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
-                    txt_lines[j] = before_equals + pictureBox1.Image.Size.Width.ToString();
-                }
+                //Debug.WriteLine(txt_lines[j]);
 
-                if(txt_lines[j].Contains(" 0 int m_AtlasWidth = "))
+                if (txt_lines[j].Contains("tlasWidth = ") && txt_lines[j].Contains("int"))
                 {
+                    Debug.WriteLine("A");
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
                     txt_lines[j] = before_equals + pictureBox1.Image.Size.Width.ToString();
                 }
@@ -1487,7 +1502,7 @@ namespace V3UnityFontReader
             }
 
             font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
-            font.m_CharacterTable.Sort((x, y) => x.m_GlyphIndex.CompareTo(y.m_GlyphIndex));
+            font.m_CharacterTable.Sort((x, y) => x.m_Unicode.CompareTo(y.m_Unicode));
             font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
