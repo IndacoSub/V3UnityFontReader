@@ -1448,6 +1448,8 @@ namespace V3UnityFontReader
                 return;
             }
 
+            Image bak = new Bitmap(pictureBox1.Image);
+
             using (Bitmap used_gfx = new Bitmap(uglyph_image))
             {
                 urect.m_Width = used_gfx.Width;
@@ -1479,14 +1481,29 @@ namespace V3UnityFontReader
                         g.DrawImage(used_gfx, uRectangle);
                         g.DrawImage(glyph_gfx, gRectangle);
                     }
-                    pictureBox1.Refresh();
                 }
             }
 
             glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
 
-            if(!font.m_CharacterTable.Contains(character))
+            if(glyph.m_GlyphRect.m_Y < 0)
+            {
+                pictureBox1.Image = new Bitmap(bak);
+                pictureBox1.Refresh();
+                return;
+            }
+
+            if(urect.m_Y < 0)
+            {
+                pictureBox1.Image = new Bitmap(bak);
+                pictureBox1.Refresh();
+                return;
+            }
+
+            pictureBox1.Refresh();
+
+            if (!font.m_CharacterTable.Contains(character))
             {
                 font.m_CharacterTable.Add(character);
             }
