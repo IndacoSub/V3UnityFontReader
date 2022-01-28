@@ -1312,7 +1312,6 @@ namespace V3UnityFontReader
 
                 if (txt_lines[j].Contains("tlasWidth = ") && txt_lines[j].Contains("int"))
                 {
-                    Debug.WriteLine("A");
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
                     txt_lines[j] = before_equals + pictureBox1.Image.Size.Width.ToString();
                 }
@@ -1321,9 +1320,28 @@ namespace V3UnityFontReader
                 {
                     string before_equals = txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
                     before_equals += "\"";
+
+                    /*
+                    foreach(TMPCharacter c in bak_charactertable)
+                    {
+                        Debug.WriteLine("Character: " + (char)c.m_Unicode + "(" + c.m_Unicode + "), num: " + c.m_GlyphIndex);
+                    }
+                    */
+
                     foreach (TMPCharacter c in bak_charactertable)
                     {
-                        before_equals += (char)c.m_Unicode;
+                        char ch = (char)c.m_Unicode;
+                        if(ch <= 0)
+                        {
+                            Debug.WriteLine("Character is being detected as zero or negative: " + c.m_Unicode);
+                            //continue;
+                        }
+                        if(char.IsWhiteSpace(ch))
+                        {
+                            Debug.WriteLine("Detected whitespace character: " + c.m_Unicode);
+                            //continue;
+                        }
+                        before_equals += ch;
                     }
                     before_equals += "\\r\\n";
                     before_equals += "\"";
@@ -1503,17 +1521,18 @@ namespace V3UnityFontReader
 
             pictureBox1.Refresh();
 
-            if (!font.m_CharacterTable.Contains(character))
-            {
-                font.m_CharacterTable.Add(character);
-            }
-
-            if(!font.m_GlyphTable.Contains(glyph))
+            if(!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
             {
                 font.m_GlyphTable.Add(glyph);
             }
 
-            if (!font.m_UsedGlyphRects.Contains(urect))
+            if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == character.m_GlyphIndex))
+            {
+                //Debug.WriteLine("Adding to character table!");
+                font.m_CharacterTable.Add(character);
+            }
+
+            if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
             {
                 font.m_UsedGlyphRects.Add(urect);
             }
