@@ -26,6 +26,7 @@ V3UnityFontReader/obj/Release/net5.0-windows/V3UnityFontReader.SpecialCharacter.
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.dgspec.json
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.g.props
 V3UnityFontReader/obj/V3UnityFontReader.csproj.nuget.g.targets
+<<<<<<< Updated upstream
 *.txt
 *.png
 V3UnityFontReader/bin/Debug/net5.0-windows/ref/V3UnityFontReader.dll
@@ -90,3 +91,11 @@ V3UnityFontReader/obj/Release/net5.0-windows8.0/V3UnityFontReader.AssemblyInfo.c
 V3UnityFontReader/obj/Release/net5.0-windows8.0/V3UnityFontReader.dll
 V3UnityFontReader/obj/Release/net5.0-windows8.0/V3UnityFontReader.Form1.resources
 V3UnityFontReader/obj/Release/net5.0-windows8.0/V3UnityFontReader.GeneratedMSBuildEditorConfig.editorconfig
+=======
+V3UnityFontReader/bin/Release/net5.0-windows/extracted/OPPOSans-R SDF-sharedassets0.assets-95/images/2.png
+V3UnityFontReader/bin/Release/net5.0-windows/extracted/OPPOSans-R SDF-sharedassets0.assets-95/data/2.txt
+V3UnityFontReader/bin/Release/net5.0-windows/extracted/OPPOSans-R SDF-sharedassets0.assets-95/data/1.txt
+.vs/V3UnityFontReader/v17/.futdcache.v1
+.vs/V3UnityFontReader/project-colors.json
+.vs/V3UnityFontReader/DesignTimeBuild/.dtbcache.v2
+>>>>>>> Stashed changes
