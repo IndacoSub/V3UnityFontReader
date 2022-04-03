@@ -99,3 +99,5 @@ V3UnityFontReader/bin/Release/net5.0-windows/extracted/OPPOSans-R SDF-sharedasse
 .vs/V3UnityFontReader/project-colors.json
 .vs/V3UnityFontReader/DesignTimeBuild/.dtbcache.v2
 >>>>>>> Stashed changes
+V3UnityFontReader/obj/Debug/net5.0-windows/refint/V3UnityFontReader.dll
+V3UnityFontReader/obj/Release/net5.0-windows/refint/V3UnityFontReader.dll
