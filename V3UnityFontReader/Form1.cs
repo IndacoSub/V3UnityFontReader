@@ -1429,6 +1429,47 @@ namespace V3UnityFontReader
             }
         }
 
+        private uint GetFirstFreeGlyph()
+        {
+            uint glyph = 0;
+
+            for(uint j = 1; j < 30000; j++)
+            {
+                glyph = j;
+                bool found = false;
+                foreach(Glyph g in font.m_GlyphTable)
+                {
+                    found |= g.m_Index == (int)glyph;
+                }
+
+                if(!found)
+                {
+                    TMPCharacter ch = new TMPCharacter();
+                    ch.m_GlyphIndex = glyph;
+                    if(IsSpecial(ch))
+                    {
+                        continue;
+                    }
+                    break;
+                }
+            }
+
+            return glyph;
+        }
+
+        private bool AllTheSameAdvance()
+        {
+            float last = font.m_GlyphTable[0].m_Metrics.m_HorizontalAdvance;
+            foreach(Glyph g in font.m_GlyphTable)
+            {
+                if(last != g.m_Metrics.m_HorizontalAdvance)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void LoadCustomFromFont(int mouseX, int mouseY)
         {
             string characterin = "";
@@ -1444,24 +1485,115 @@ namespace V3UnityFontReader
                 return;
             }
 
-            Color c = Color.FromArgb(128, 255, 255, 255);
+            if(characterin.Length < 1)
+            {
+                MessageBox.Show("Invalid character!");
+                return;
+            }
+
+            // Graphics part
+
+            Color c = Color.FromArgb(130, 255, 255, 255);
             SolidBrush mybrush = new SolidBrush(c);
             PointF point = new PointF(mouseX, mouseY);
+            StringFormat format = StringFormat.GenericTypographic;
 
             // Weird color but it's a start
 
+            float char_width = 0, char_height = 0;
+            float spacing_width = 0, spacing_height = 0;
+
             using (Graphics g = Graphics.FromImage(pictureBox1.Image))
             {
-                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.Default;
+                //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                 //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-                g.DrawString(characterin, fm.CurrentFont, mybrush, point);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                g.DrawString(characterin, fm.CurrentFont, mybrush, point, format);
+                int maxheight = 100;
+                SizeF size = g.MeasureString(characterin.Substring(0, 1), fm.CurrentFont, maxheight, format);
+                char_width = size.Width;
+                char_height = size.Height;
+                //format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                SizeF spacing = g.MeasureString(" " + characterin.Substring(0, 1) + " ", fm.CurrentFont, maxheight, format);
+                spacing_width = spacing.Width;
+                spacing_height = spacing.Height;
                 //g.Save();
             }
 
             pictureBox1.Refresh();
+
+            //MessageBox.Show("Width: " + char_width + ", Height: " + char_height);
+            //MessageBox.Show("TS Width: " + spacing_width + ", TS Height: " + spacing_height);
+
+            // Data part
+
+            TMPCharacter character = new TMPCharacter();
+            Glyph glyph = new Glyph();
+            GlyphRect urect = new GlyphRect();
+
+            // Get first free glyph
+            uint free_glyph = GetFirstFreeGlyph();
+
+            character.m_Unicode = characterin[0];
+            character.m_GlyphIndex = free_glyph;
+
+            glyph.m_Index = (int)free_glyph;
+            glyph.m_GlyphRect.m_Width = (int)char_width;
+            glyph.m_GlyphRect.m_Height = (int)char_height;
+            glyph.m_GlyphRect.m_X = mouseX;
+            glyph.m_GlyphRect.m_Y = mouseY;
+            glyph.m_Metrics.m_Width = char_width;
+            glyph.m_Metrics.m_Height = char_height;
+            glyph.m_Metrics.m_HorizontalBearingX = char_width * 0.025f;
+            glyph.m_Metrics.m_HorizontalBearingY = glyph.m_Metrics.m_Height - (glyph.m_Metrics.m_Height / 10) - (glyph.m_Metrics.m_HorizontalBearingX / 2);
+            bool atsa = AllTheSameAdvance();
+            if(!atsa)
+            {
+                glyph.m_Metrics.m_HorizontalAdvance = glyph.m_Metrics.m_Width + (glyph.m_Metrics.m_HorizontalBearingX * 2);
+            } else
+            {
+                glyph.m_Metrics.m_HorizontalAdvance = font.m_GlyphTable[0].m_Metrics.m_HorizontalAdvance;
+            }
+
+            urect.m_Width = (int)spacing_width;
+            urect.m_Height = (int)spacing_height + 1;
+            //urect.m_Width = (int)char_width + 1;
+            //urect.m_Height = (int)char_height + 1;
+
+            // I have no idea
+            urect.m_X = (glyph.m_GlyphRect.m_X - (glyph.m_GlyphRect.m_Width - urect.m_Width) / 2);
+            urect.m_Y = (glyph.m_GlyphRect.m_Y - (glyph.m_GlyphRect.m_Height - urect.m_Height) / 2);
+
+            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
+
+            // (HACK) Why does this even work?!
+            glyph.m_Metrics.m_Height += 4.0f;
+            glyph.m_GlyphRect.m_Height += 4;
+
+            if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
+            {
+                font.m_GlyphTable.Add(glyph);
+            }
+
+            if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == character.m_GlyphIndex))
+            {
+                //Debug.WriteLine("Adding to character table!");
+                font.m_CharacterTable.Add(character);
+            }
+
+            if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
+            {
+                font.m_UsedGlyphRects.Add(urect);
+            }
+
+            if(font.m_GlyphTable.Count < 100)
+            {
+                font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
+                font.m_CharacterTable.Sort((x, y) => x.m_Unicode.CompareTo(y.m_Unicode));
+                font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
+            }
         }
 
         private void LoadCustomFromFiles(int mouseX, int mouseY)
@@ -1860,7 +1992,9 @@ namespace V3UnityFontReader
 
             fm = new FontManager(fn);
             fm.LoadCurrentFont();
-            fm.SetCurrentFontSize(36);
+            fm.SetCurrentFontSize(30);
+
+            label6.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
         }
     }
 }
