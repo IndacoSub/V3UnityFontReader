@@ -1478,6 +1478,7 @@ namespace V3UnityFontReader
                 .ToArray());
         }
 
+        // TODO: Find a better name!
         private (int, int) Unknown1(string character, int startX, int startY)
         {
             int ret1 = 0, ret2 = 0;
