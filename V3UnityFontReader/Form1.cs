@@ -2040,7 +2040,7 @@ namespace V3UnityFontReader
 
             fm = new FontManager(fn);
             fm.LoadCurrentFont();
-            fm.SetCurrentFontSize(29);
+            fm.SetCurrentFontSize(29); // TODO: editable at runtime
 
             label6.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
         }
