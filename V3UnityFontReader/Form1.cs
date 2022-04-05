@@ -1487,8 +1487,6 @@ namespace V3UnityFontReader
             PointF point = new PointF(startX, startY);
             StringFormat format = StringFormat.GenericTypographic;
 
-            // Weird color but it's a start
-
             float char_width = 0, char_height = 0;
             float spacing_width = 0, spacing_height = 0;
 
