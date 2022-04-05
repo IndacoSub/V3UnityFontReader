@@ -55,6 +55,7 @@ namespace V3UnityFontReader
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button11 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -304,11 +305,23 @@ namespace V3UnityFontReader
             this.label6.TabIndex = 24;
             this.label6.Text = "Font: None";
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(191, 875);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(171, 24);
+            this.checkBox1.TabIndex = 25;
+            this.checkBox1.Text = "Font \"+4\" height hack";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1169, 899);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.panel1);
@@ -369,5 +382,6 @@ namespace V3UnityFontReader
         private PictureBox pictureBox1;
         private Button button11;
         private Label label6;
+        private CheckBox checkBox1;
     }
 }

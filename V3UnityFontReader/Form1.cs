@@ -1470,6 +1470,131 @@ namespace V3UnityFontReader
             return true;
         }
 
+        // Remove spaces (https://stackoverflow.com/questions/6219454/efficient-way-to-remove-all-whitespace-from-string)
+        public static string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
+        }
+
+        private (int, int) Unknown1(string character, int startX, int startY)
+        {
+            int ret1 = 0, ret2 = 0;
+
+            Color c = Color.FromArgb(125, 255, 255, 255);
+            SolidBrush mybrush = new SolidBrush(c);
+            PointF point = new PointF(startX, startY);
+            StringFormat format = StringFormat.GenericTypographic;
+
+            // Weird color but it's a start
+
+            float char_width = 0, char_height = 0;
+            float spacing_width = 0, spacing_height = 0;
+
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                g.DrawString(character, fm.CurrentFont, mybrush, point, format);
+                int maxheight = 100;
+                SizeF size = g.MeasureString(character.Substring(0, 1), fm.CurrentFont, maxheight, format);
+                char_width = size.Width;
+                char_height = size.Height;
+                //format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                SizeF spacing = g.MeasureString(" " + character.Substring(0, 1) + " ", fm.CurrentFont, maxheight, format);
+                spacing_width = spacing.Width;
+                spacing_height = spacing.Height;
+                //g.Save();
+            }
+
+            pictureBox1.Refresh();
+
+            //MessageBox.Show("Width: " + char_width + ", Height: " + char_height);
+            //MessageBox.Show("TS Width: " + spacing_width + ", TS Height: " + spacing_height);
+
+            // Data part
+
+            TMPCharacter tmpcharacter = new TMPCharacter();
+            Glyph glyph = new Glyph();
+            GlyphRect urect = new GlyphRect();
+
+            // Get first free glyph
+            uint free_glyph = GetFirstFreeGlyph();
+
+            tmpcharacter.m_Unicode = character[0];
+            tmpcharacter.m_GlyphIndex = free_glyph;
+
+            glyph.m_Index = (int)free_glyph;
+            glyph.m_GlyphRect.m_Width = (int)char_width;
+            glyph.m_GlyphRect.m_Height = (int)char_height;
+            glyph.m_GlyphRect.m_X = startX;
+            glyph.m_GlyphRect.m_Y = startY;
+            glyph.m_Metrics.m_Width = char_width;
+            glyph.m_Metrics.m_Height = char_height;
+            glyph.m_Metrics.m_HorizontalBearingX = char_width * 0.025f;
+            glyph.m_Metrics.m_HorizontalBearingY = glyph.m_Metrics.m_Height - (glyph.m_Metrics.m_Height / 10) - (glyph.m_Metrics.m_HorizontalBearingX / 2);
+            bool atsa = AllTheSameAdvance();
+            if (!atsa)
+            {
+                glyph.m_Metrics.m_HorizontalAdvance = glyph.m_Metrics.m_Width + (glyph.m_Metrics.m_HorizontalBearingX * 2);
+            }
+            else
+            {
+                glyph.m_Metrics.m_HorizontalAdvance = font.m_GlyphTable[0].m_Metrics.m_HorizontalAdvance;
+            }
+
+            urect.m_Width = (int)spacing_width;
+            urect.m_Height = (int)spacing_height + 1;
+            //urect.m_Width = (int)char_width + 1;
+            //urect.m_Height = (int)char_height + 1;
+
+            // I have no idea
+            urect.m_X = (glyph.m_GlyphRect.m_X - (glyph.m_GlyphRect.m_Width - urect.m_Width) / 2);
+            urect.m_Y = (glyph.m_GlyphRect.m_Y - (glyph.m_GlyphRect.m_Height - urect.m_Height) / 2);
+
+            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
+
+            if(checkBox1.Checked)
+            {
+                // (HACK) Why does this even work?!
+                glyph.m_Metrics.m_Height += 4.0f;
+                glyph.m_GlyphRect.m_Height += 4;
+            }
+
+            if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
+            {
+                font.m_GlyphTable.Add(glyph);
+            }
+
+            if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == tmpcharacter.m_GlyphIndex))
+            {
+                //Debug.WriteLine("Adding to character table!");
+                font.m_CharacterTable.Add(tmpcharacter);
+            }
+
+            if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
+            {
+                font.m_UsedGlyphRects.Add(urect);
+            }
+
+            if (font.m_GlyphTable.Count < 100)
+            {
+                font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
+                font.m_CharacterTable.Sort((x, y) => x.m_Unicode.CompareTo(y.m_Unicode));
+                font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
+            }
+
+            ret1 = (int)spacing_width;
+            ret2 = (int)spacing_height;
+
+            // To account for errors in float->int
+            return (ret1 + 1, ret2 + 1);
+        }
+
         private void LoadCustomFromFont(int mouseX, int mouseY)
         {
             string characterin = "";
@@ -1491,108 +1616,31 @@ namespace V3UnityFontReader
                 return;
             }
 
+            characterin = RemoveWhitespace(characterin);
+
             // Graphics part
 
-            Color c = Color.FromArgb(130, 255, 255, 255);
-            SolidBrush mybrush = new SolidBrush(c);
-            PointF point = new PointF(mouseX, mouseY);
-            StringFormat format = StringFormat.GenericTypographic;
-
-            // Weird color but it's a start
-
-            float char_width = 0, char_height = 0;
-            float spacing_width = 0, spacing_height = 0;
-
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            int startX = 0, startY = 0;
+            int leftmostX = mouseX;
+            for(int j = 0; j < characterin.Length; j++)
             {
-                //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-                g.DrawString(characterin, fm.CurrentFont, mybrush, point, format);
-                int maxheight = 100;
-                SizeF size = g.MeasureString(characterin.Substring(0, 1), fm.CurrentFont, maxheight, format);
-                char_width = size.Width;
-                char_height = size.Height;
-                //format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-                SizeF spacing = g.MeasureString(" " + characterin.Substring(0, 1) + " ", fm.CurrentFont, maxheight, format);
-                spacing_width = spacing.Width;
-                spacing_height = spacing.Height;
-                //g.Save();
-            }
+                if(j == 0)
+                {
+                    startX = mouseX;
+                    startY = mouseY;
+                }
+                string ch = characterin[j].ToString();
+                (int retx, int rety) = Unknown1(ch, startX, startY);
+                int newx = startX + (3*retx) + 10; // Arbitrary value just to be sure
+                int newy = startY;
+                if(newx >= pictureBox1.Width || newx + (6*retx) + 10 >= pictureBox1.Width) // Arbitrary value just to be extra sure
+                {
+                    newx = leftmostX;
+                    newy = startY + (3*rety) + 10; // Arbitrary value just to be sure
+                }
 
-            pictureBox1.Refresh();
-
-            //MessageBox.Show("Width: " + char_width + ", Height: " + char_height);
-            //MessageBox.Show("TS Width: " + spacing_width + ", TS Height: " + spacing_height);
-
-            // Data part
-
-            TMPCharacter character = new TMPCharacter();
-            Glyph glyph = new Glyph();
-            GlyphRect urect = new GlyphRect();
-
-            // Get first free glyph
-            uint free_glyph = GetFirstFreeGlyph();
-
-            character.m_Unicode = characterin[0];
-            character.m_GlyphIndex = free_glyph;
-
-            glyph.m_Index = (int)free_glyph;
-            glyph.m_GlyphRect.m_Width = (int)char_width;
-            glyph.m_GlyphRect.m_Height = (int)char_height;
-            glyph.m_GlyphRect.m_X = mouseX;
-            glyph.m_GlyphRect.m_Y = mouseY;
-            glyph.m_Metrics.m_Width = char_width;
-            glyph.m_Metrics.m_Height = char_height;
-            glyph.m_Metrics.m_HorizontalBearingX = char_width * 0.025f;
-            glyph.m_Metrics.m_HorizontalBearingY = glyph.m_Metrics.m_Height - (glyph.m_Metrics.m_Height / 10) - (glyph.m_Metrics.m_HorizontalBearingX / 2);
-            bool atsa = AllTheSameAdvance();
-            if(!atsa)
-            {
-                glyph.m_Metrics.m_HorizontalAdvance = glyph.m_Metrics.m_Width + (glyph.m_Metrics.m_HorizontalBearingX * 2);
-            } else
-            {
-                glyph.m_Metrics.m_HorizontalAdvance = font.m_GlyphTable[0].m_Metrics.m_HorizontalAdvance;
-            }
-
-            urect.m_Width = (int)spacing_width;
-            urect.m_Height = (int)spacing_height + 1;
-            //urect.m_Width = (int)char_width + 1;
-            //urect.m_Height = (int)char_height + 1;
-
-            // I have no idea
-            urect.m_X = (glyph.m_GlyphRect.m_X - (glyph.m_GlyphRect.m_Width - urect.m_Width) / 2);
-            urect.m_Y = (glyph.m_GlyphRect.m_Y - (glyph.m_GlyphRect.m_Height - urect.m_Height) / 2);
-
-            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
-            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
-
-            // (HACK) Why does this even work?!
-            glyph.m_Metrics.m_Height += 4.0f;
-            glyph.m_GlyphRect.m_Height += 4;
-
-            if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
-            {
-                font.m_GlyphTable.Add(glyph);
-            }
-
-            if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == character.m_GlyphIndex))
-            {
-                //Debug.WriteLine("Adding to character table!");
-                font.m_CharacterTable.Add(character);
-            }
-
-            if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
-            {
-                font.m_UsedGlyphRects.Add(urect);
-            }
-
-            if(font.m_GlyphTable.Count < 100)
-            {
-                font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
-                font.m_CharacterTable.Sort((x, y) => x.m_Unicode.CompareTo(y.m_Unicode));
-                font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
+                startX = newx;
+                startY = newy;
             }
         }
 
@@ -1992,9 +2040,14 @@ namespace V3UnityFontReader
 
             fm = new FontManager(fn);
             fm.LoadCurrentFont();
-            fm.SetCurrentFontSize(30);
+            fm.SetCurrentFontSize(29);
 
             label6.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
