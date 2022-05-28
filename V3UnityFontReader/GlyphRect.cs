@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace V3UnityFontReader
 {
     internal class GlyphRect
     {
-
         public Int32 m_X = 0;
         public Int32 m_Y = 0;
         public Int32 m_Width = 0;
