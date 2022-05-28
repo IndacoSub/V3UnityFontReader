@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace V3UnityFontReader
 {
@@ -17,7 +13,6 @@ namespace V3UnityFontReader
 
         public void Read(string str, int index)
         {
-
             string after_equal = str.Substring(str.LastIndexOf("=") + 1);
 
             switch (index)

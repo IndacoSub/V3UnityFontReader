@@ -3,32 +3,30 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
-using System.Windows.Forms;
 
 // Copied from "DGRV3TS" so not "native" to this application
 
 namespace V3UnityFontReader
 {
-    class FontManager
+    internal class FontManager
     {
-        public PrivateFontCollection CustomFonts;
-        public List<Font> FontList;
-        public Font CurrentFont;
-        public Color CurrentColor = Color.White;
-        public float FontSize;
-        public float CurrentFontSize = 0.0f;
-        public bool LoadedFont;
-
-        public string FontName = "";
-
         public const int FirstFont = 0;
+        public Color CurrentColor = Color.White;
+        public Font CurrentFont;
+        public float CurrentFontSize;
+        public PrivateFontCollection CustomFonts;
 
         // Use Calibri for the displayed text
         public string DefaultFontName = "Calibri";
 
         // Use Microsoft Sans Serif for the editable text box
         public string DefaultFontNameForText = "Microsoft Sans Serif";
+        public List<Font> FontList;
+
+        public string FontName = "";
+        public float FontSize;
         public int FontSizeForText = 14;
+        public bool LoadedFont;
 
         public FontManager(string init_font)
         {
@@ -72,12 +70,9 @@ namespace V3UnityFontReader
                 else
                 {
                     string file = init_font;
-                    if(File.Exists(file))
+                    if (File.Exists(file))
                     {
                         LoadCustomFont(file);
-                    } else
-                    {
-                        //MessageBox.Show("Custom font file does not exist: " + file);
                     }
                 }
             }
@@ -121,11 +116,12 @@ namespace V3UnityFontReader
         public void LoadCustomFont(string filename)
         {
             var file = filename;
-            if (!file.Contains(".ttf") && !file.Contains(".otf") || file.Length == 0)
+            if ((!file.Contains(".ttf") && !file.Contains(".otf")) || file.Length == 0)
             {
                 Debug.WriteLine("Could not load font!");
                 return;
             }
+
             CustomFonts.AddFontFile(file);
         }
 
@@ -139,10 +135,10 @@ namespace V3UnityFontReader
                 fns = fns + " Regular";
 
                 Font regFont = new Font(
-                   fn,
-                   FontSize,
-                   FontStyle.Regular,
-                   GraphicsUnit.Pixel);
+                    fn,
+                    FontSize,
+                    FontStyle.Regular,
+                    GraphicsUnit.Pixel);
 
                 FontList.Add(regFont);
             }
@@ -163,10 +159,10 @@ namespace V3UnityFontReader
                 fns = fns + " Bold";
 
                 Font boldFont = new Font(
-                   fn,
-                   FontSize,
-                   FontStyle.Bold,
-                   GraphicsUnit.Pixel);
+                    fn,
+                    FontSize,
+                    FontStyle.Bold,
+                    GraphicsUnit.Pixel);
 
                 FontList.Add(boldFont);
             }
@@ -182,10 +178,10 @@ namespace V3UnityFontReader
                 fns = fns + " Italic";
 
                 Font italicFont = new Font(
-                   fn,
-                   FontSize,
-                   FontStyle.Italic,
-                   GraphicsUnit.Pixel);
+                    fn,
+                    FontSize,
+                    FontStyle.Italic,
+                    GraphicsUnit.Pixel);
 
                 FontList.Add(italicFont);
             }
@@ -201,10 +197,10 @@ namespace V3UnityFontReader
                 fns = fns + "BoldItalic";
 
                 Font italicFont = new Font(
-                   fn,
-                   FontSize,
-                   FontStyle.Italic | FontStyle.Bold,
-                   GraphicsUnit.Pixel);
+                    fn,
+                    FontSize,
+                    FontStyle.Italic | FontStyle.Bold,
+                    GraphicsUnit.Pixel);
 
                 FontList.Add(italicFont);
             }
@@ -220,10 +216,10 @@ namespace V3UnityFontReader
                 fns = fns + " Underline";
 
                 Font underlineFont = new Font(
-                   fn,
-                   FontSize,
-                   FontStyle.Underline,
-                   GraphicsUnit.Pixel);
+                    fn,
+                    FontSize,
+                    FontStyle.Underline,
+                    GraphicsUnit.Pixel);
 
                 FontList.Add(underlineFont);
             }
@@ -239,10 +235,10 @@ namespace V3UnityFontReader
                 fns = fns + " Strikeout";
 
                 Font strikeFont = new Font(
-                   fn,
-                   FontSize,
-                   FontStyle.Strikeout,
-                   GraphicsUnit.Pixel);
+                    fn,
+                    FontSize,
+                    FontStyle.Strikeout,
+                    GraphicsUnit.Pixel);
 
                 FontList.Add(strikeFont);
             }
