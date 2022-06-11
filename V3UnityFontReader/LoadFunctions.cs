@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace V3UnityFontReader
@@ -362,7 +359,8 @@ namespace V3UnityFontReader
                 }
             }
 
-            glyph.m_GlyphRect.m_Y = PictureBoxImage.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            glyph.m_GlyphRect.m_Y =
+                PictureBoxImage.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = PictureBoxImage.Image.Size.Height - urect.m_Y - urect.m_Height;
 
             if (glyph.m_GlyphRect.m_Y < 0)

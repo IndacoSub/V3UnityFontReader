@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace V3UnityFontReader
 {
     public partial class Form1
     {
-
         // TODO: Find a better name!
         private (int, int) AttemptNextXY(string character, int startX, int startY)
         {
@@ -90,7 +85,8 @@ namespace V3UnityFontReader
             urect.m_X = glyph.m_GlyphRect.m_X - (glyph.m_GlyphRect.m_Width - urect.m_Width) / 2;
             urect.m_Y = glyph.m_GlyphRect.m_Y - (glyph.m_GlyphRect.m_Height - urect.m_Height) / 2;
 
-            glyph.m_GlyphRect.m_Y = PictureBoxImage.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            glyph.m_GlyphRect.m_Y =
+                PictureBoxImage.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = PictureBoxImage.Image.Size.Height - urect.m_Y - urect.m_Height;
 
             if (CheckboxAddX.Checked)
