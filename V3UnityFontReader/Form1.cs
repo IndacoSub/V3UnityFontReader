@@ -41,8 +41,8 @@ namespace V3UnityFontReader
             rectangle = new Rectangle();
             fm = new FontManager("Calibri");
 
-            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
-            panel1.AutoScroll = true;
+            PictureBoxImage.SizeMode = PictureBoxSizeMode.AutoSize;
+            ImagePanel.AutoScroll = true;
         }
 
         // Ask input (https://stackoverflow.com/questions/97097/what-is-the-c-sharp-version-of-vb-nets-inputdialog)
@@ -94,9 +94,9 @@ namespace V3UnityFontReader
                 foreach (GlyphRect free in font.m_FreeGlyphRects)
                 {
                     Rectangle usedrect = new Rectangle(used.m_X,
-                        pictureBox1.Image.Size.Height - used.m_Y - used.m_Height, used.m_Width, used.m_Height);
+                        PictureBoxImage.Image.Size.Height - used.m_Y - used.m_Height, used.m_Width, used.m_Height);
                     Rectangle freerect = new Rectangle(free.m_X,
-                        pictureBox1.Image.Size.Height - free.m_Y - free.m_Height, free.m_Width, free.m_Height);
+                        PictureBoxImage.Image.Size.Height - free.m_Y - free.m_Height, free.m_Width, free.m_Height);
                     if (usedrect.IntersectsWith(freerect) || freerect.IntersectsWith(usedrect))
                     {
                         Debug.WriteLine("Intersects!");
@@ -249,14 +249,14 @@ namespace V3UnityFontReader
 
         private void PaintRectangle()
         {
-            pictureBox1.Image = new Bitmap(png_fn);
-            pictureBox1.Refresh();
+            PictureBoxImage.Image = new Bitmap(png_fn);
+            PictureBoxImage.Refresh();
             // Y is inverted and does not account for the character itself
 
             rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
 
             //rectangle = new Rectangle(font.m_UsedGlyphRects[cur_index].m_X, InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y), font.m_UsedGlyphRects[cur_index].m_Width, font.m_UsedGlyphRects[cur_index].m_Height);
-            using (Graphics gr = Graphics.FromImage(pictureBox1.Image))
+            using (Graphics gr = Graphics.FromImage(PictureBoxImage.Image))
             {
                 using (Pen pen = new Pen(Color.Red, 1))
                 {
@@ -264,7 +264,7 @@ namespace V3UnityFontReader
                 }
             }
 
-            pictureBox1.Refresh();
+            PictureBoxImage.Refresh();
         }
 
         private void VerifyUsedGlyphTable()
@@ -325,7 +325,7 @@ namespace V3UnityFontReader
                 return;
             }
 
-            pictureBox1.Image = new Bitmap(png_fn);
+            PictureBoxImage.Image = new Bitmap(png_fn);
             cur_index = 0;
 
             string ext = Path.Combine(Directory.GetCurrentDirectory(), "extracted");
@@ -416,7 +416,7 @@ namespace V3UnityFontReader
 
             cur_index = 0;
 
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
                 g.Clear(Color.Transparent);
                 g.ResetClip();
@@ -505,7 +505,7 @@ namespace V3UnityFontReader
             }
 
             // For some reason, the opacity might be broken?
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
                 g.CompositingMode = CompositingMode.SourceCopy;
                 //g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
@@ -513,7 +513,7 @@ namespace V3UnityFontReader
                 g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));
             }
 
-            pictureBox1.Refresh();
+            PictureBoxImage.Refresh();
             total_red_image++;
         }
 
@@ -623,14 +623,14 @@ namespace V3UnityFontReader
             }
 
             // For some reason, the opacity might be broken?
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
                 g.CompositingMode = CompositingMode.SourceCopy;
                 //g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                 g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));
             }
 
-            pictureBox1.Refresh();
+            PictureBoxImage.Refresh();
             total_red_image++;
         }
 
@@ -751,8 +751,8 @@ namespace V3UnityFontReader
 
         private void PaintRectangleUsed()
         {
-            pictureBox1.Image = new Bitmap(png_fn);
-            pictureBox1.Refresh();
+            PictureBoxImage.Image = new Bitmap(png_fn);
+            PictureBoxImage.Refresh();
 
             //Debug.WriteLine("Width: " + font.m_UsedGlyphRects[cur_index].m_Width + ", Height: " + font.m_UsedGlyphRects[cur_index].m_Height);
 
@@ -762,7 +762,7 @@ namespace V3UnityFontReader
                 font.m_UsedGlyphRects[cur_index].m_Width,
                 font.m_UsedGlyphRects[cur_index].m_Height);
 
-            using (Graphics gr = Graphics.FromImage(pictureBox1.Image))
+            using (Graphics gr = Graphics.FromImage(PictureBoxImage.Image))
             {
                 using (Pen pen = new Pen(Color.Red, 1))
                 {
@@ -770,7 +770,7 @@ namespace V3UnityFontReader
                 }
             }
 
-            pictureBox1.Refresh();
+            PictureBoxImage.Refresh();
         }
 
         private void ExtractGlyphData()
@@ -874,37 +874,37 @@ namespace V3UnityFontReader
         private int InterpretY(int y)
         {
             // Used to read "partial glyphs" a.k.a. letters/numbers/symbols
-            int ret = pictureBox1.Image.Size.Height - y - rect.m_Height;
+            int ret = PictureBoxImage.Image.Size.Height - y - rect.m_Height;
             return ret < 0 ? 0 : ret;
         }
 
         private int InterpretY2(int y)
         {
             // Used to read *used* "full glyphs" a.k.a. letters/numbers/symbols PLUS their surrounding area (used in colored CLT)
-            int ret = pictureBox1.Image.Size.Height - y - font.m_UsedGlyphRects[cur_index].m_Height;
+            int ret = PictureBoxImage.Image.Size.Height - y - font.m_UsedGlyphRects[cur_index].m_Height;
             return ret < 0 ? 0 : ret;
         }
 
         private int InterpretY3(int y)
         {
             // Used to read *free* glyphs (dumbest feature ever)
-            int ret = pictureBox1.Image.Size.Height - y - font.m_FreeGlyphRects[cur_index].m_Height;
+            int ret = PictureBoxImage.Image.Size.Height - y - font.m_FreeGlyphRects[cur_index].m_Height;
             return ret < 0 ? 0 : ret;
         }
 
         private int NormalizeY(int y)
         {
-            return Math.Abs(y - pictureBox1.Image.Size.Height + rect.m_Height);
+            return Math.Abs(y - PictureBoxImage.Image.Size.Height + rect.m_Height);
         }
 
         private int NormalizeY2(int y)
         {
-            return Math.Abs(y - pictureBox1.Image.Size.Height + font.m_UsedGlyphRects[cur_index].m_Height);
+            return Math.Abs(y - PictureBoxImage.Image.Size.Height + font.m_UsedGlyphRects[cur_index].m_Height);
         }
 
         private int NormalizeY3(int y)
         {
-            return Math.Abs(y - pictureBox1.Image.Size.Height + font.m_FreeGlyphRects[cur_index].m_Height);
+            return Math.Abs(y - PictureBoxImage.Image.Size.Height + font.m_FreeGlyphRects[cur_index].m_Height);
         }
 
         private TMPCharacter GetCharacterFromIndex(int index)
@@ -933,7 +933,7 @@ namespace V3UnityFontReader
             char c = (char)character.m_Unicode;
             int x = rect.m_X;
             int y = rect.m_Y;
-            textBox1.Text =
+            InfoTextbox.Text =
                 "m_Index: " +
                 index +
                 ", character: \"" +
@@ -953,12 +953,12 @@ namespace V3UnityFontReader
                 ", cH: " +
                 rect.m_Height
                 ;
-            //textBox1.Text = "Index: " + cur_index + ", inside is: " + (char)WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + " (" + WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + "), X: " + font.m_UsedGlyphRects[cur_index].m_X + ", Y: " + InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y);
-            textBox1.Update();
-            textBox1.Refresh();
+            //InfoTextbox.Text = "Index: " + cur_index + ", inside is: " + (char)WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + " (" + WhatIsInsideGlyphRect(font.m_UsedGlyphRects[cur_index]).m_Unicode + "), X: " + font.m_UsedGlyphRects[cur_index].m_X + ", Y: " + InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y);
+            InfoTextbox.Update();
+            InfoTextbox.Refresh();
 
-            label4.Text = "Table Rect Y (" + c + ")";
-            label5.Text = "Used Glyph Y (" + c + ")";
+            LabelTableY.Text = "Table Rect Y (" + c + ")";
+            LabelUsedY.Text = "Used Glyph Y (" + c + ")";
         }
 
         private void OpenPNG()
@@ -978,8 +978,8 @@ namespace V3UnityFontReader
             }
 
             png_fn = filename;
-            pictureBox1.Image = new Bitmap(png_fn);
-            pictureBox1.Refresh();
+            PictureBoxImage.Image = new Bitmap(png_fn);
+            PictureBoxImage.Refresh();
 
             loaded_png = true;
 
@@ -1230,7 +1230,7 @@ namespace V3UnityFontReader
                 return;
             }
 
-            Image i = pictureBox1.Image;
+            Image i = PictureBoxImage.Image;
             SaveFileDialog save = new SaveFileDialog();
             save.Filter = ".PNG file|*.png";
             save.Title = "Save as .PNG";
@@ -1412,7 +1412,7 @@ namespace V3UnityFontReader
                 {
                     string before_equals =
                         txt_lines[j].Substring(0, txt_lines[j].IndexOf("=") + 1 + 1); // Itself *and* space included
-                    txt_lines[j] = before_equals + pictureBox1.Image.Size.Width;
+                    txt_lines[j] = before_equals + PictureBoxImage.Image.Size.Width;
                 }
 
                 if (txt_lines[j].Contains("characterSequence"))
@@ -1459,20 +1459,20 @@ namespace V3UnityFontReader
             File.WriteAllLines(filename, txt_lines);
         }
 
-        private void pictureBox1_Click(object sender, MouseEventArgs e)
+        private void PictureBoxImage_Click(object sender, MouseEventArgs e)
         {
             if (!loaded_png || !loaded_txt)
             {
                 return;
             }
 
-            if (e.X > pictureBox1.Image.Size.Width)
+            if (e.X > PictureBoxImage.Image.Size.Width)
             {
                 MessageBox.Show("Invalid mouse-X!");
                 return;
             }
 
-            if (e.Y > pictureBox1.Image.Size.Height)
+            if (e.Y > PictureBoxImage.Image.Size.Height)
             {
                 MessageBox.Show("Invalid mouse-Y!");
                 return;
@@ -1552,7 +1552,7 @@ namespace V3UnityFontReader
             float char_width = 0, char_height = 0;
             float spacing_width = 0, spacing_height = 0;
 
-            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
                 //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                 //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -1571,7 +1571,7 @@ namespace V3UnityFontReader
                 //g.Save();
             }
 
-            pictureBox1.Refresh();
+            PictureBoxImage.Refresh();
 
             //MessageBox.Show("Width: " + char_width + ", Height: " + char_height);
             //MessageBox.Show("TS Width: " + spacing_width + ", TS Height: " + spacing_height);
@@ -1618,10 +1618,10 @@ namespace V3UnityFontReader
             urect.m_X = glyph.m_GlyphRect.m_X - (glyph.m_GlyphRect.m_Width - urect.m_Width) / 2;
             urect.m_Y = glyph.m_GlyphRect.m_Y - (glyph.m_GlyphRect.m_Height - urect.m_Height) / 2;
 
-            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
-            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
+            glyph.m_GlyphRect.m_Y = PictureBoxImage.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            urect.m_Y = PictureBoxImage.Image.Size.Height - urect.m_Y - urect.m_Height;
 
-            if (checkBox1.Checked)
+            if (CheckboxAddX.Checked)
             {
                 // (HACK) Why does this even work?!
                 glyph.m_Metrics.m_Height += 4.0f;
@@ -1698,8 +1698,8 @@ namespace V3UnityFontReader
                 (int retx, int rety) = Unknown1(ch, startX, startY);
                 int newx = startX + 3 * retx + 10; // Arbitrary value just to be sure
                 int newy = startY;
-                if (newx >= pictureBox1.Width ||
-                    newx + 6 * retx + 10 >= pictureBox1.Width) // Arbitrary value just to be extra sure
+                if (newx >= PictureBoxImage.Width ||
+                    newx + 6 * retx + 10 >= PictureBoxImage.Width) // Arbitrary value just to be extra sure
                 {
                     newx = leftmostX;
                     newy = startY + 3 * rety + 10; // Arbitrary value just to be sure
@@ -1806,7 +1806,7 @@ namespace V3UnityFontReader
                 return;
             }
 
-            Image bak = new Bitmap(pictureBox1.Image);
+            Image bak = new Bitmap(PictureBoxImage.Image);
 
             using (Bitmap used_gfx = new Bitmap(uglyph_image))
             {
@@ -1830,13 +1830,13 @@ namespace V3UnityFontReader
                         urect.m_X + (urect.m_Width - glyph.m_GlyphRect.m_Width) / 2 + (is_x_odd ? 0 : 0);
                     glyph.m_GlyphRect.m_Y = urect.m_Y + (urect.m_Height - glyph.m_GlyphRect.m_Height) / 2 +
                                             (is_y_odd ? 0 : 0);
-                    //glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - urect.m_Height - glyph.m_GlyphRect.m_Height;
+                    //glyph.m_GlyphRect.m_Y = PictureBoxImage.Image.Size.Height - urect.m_Height - glyph.m_GlyphRect.m_Height;
 
                     Rectangle uRectangle = new Rectangle(urect.m_X, urect.m_Y, urect.m_Width, urect.m_Height);
                     Rectangle gRectangle = new Rectangle(glyph.m_GlyphRect.m_X, glyph.m_GlyphRect.m_Y,
                         glyph.m_GlyphRect.m_Width, glyph.m_GlyphRect.m_Height);
 
-                    using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+                    using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
                     {
                         g.CompositingMode = CompositingMode.SourceCopy;
                         g.DrawImage(used_gfx, uRectangle);
@@ -1845,24 +1845,24 @@ namespace V3UnityFontReader
                 }
             }
 
-            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
-            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
+            glyph.m_GlyphRect.m_Y = PictureBoxImage.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            urect.m_Y = PictureBoxImage.Image.Size.Height - urect.m_Y - urect.m_Height;
 
             if (glyph.m_GlyphRect.m_Y < 0)
             {
-                pictureBox1.Image = new Bitmap(bak);
-                pictureBox1.Refresh();
+                PictureBoxImage.Image = new Bitmap(bak);
+                PictureBoxImage.Refresh();
                 return;
             }
 
             if (urect.m_Y < 0)
             {
-                pictureBox1.Image = new Bitmap(bak);
-                pictureBox1.Refresh();
+                PictureBoxImage.Image = new Bitmap(bak);
+                PictureBoxImage.Refresh();
                 return;
             }
 
-            pictureBox1.Refresh();
+            PictureBoxImage.Refresh();
 
             if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
             {
@@ -1950,9 +1950,9 @@ namespace V3UnityFontReader
             DecreaseIndex();
             PaintRectangle();
             UpdateTextboxString();
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
+            TextboxNormalY.Text = "";
+            TextboxTableY.Text = "";
+            TextboxUsedY.Text = "";
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -1961,9 +1961,9 @@ namespace V3UnityFontReader
             PaintRectangle();
             //PaintRectangleUsed();
             UpdateTextboxString();
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
+            TextboxNormalY.Text = "";
+            TextboxTableY.Text = "";
+            TextboxUsedY.Text = "";
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -1990,24 +1990,24 @@ namespace V3UnityFontReader
             SaveFontAsTXT();
         }
 
-        private void label4_Click(object sender, EventArgs e)
+        private void LabelTableY_Click(object sender, EventArgs e)
         {
         }
 
-        private void label5_Click(object sender, EventArgs e)
+        private void LabelUsedY_Click(object sender, EventArgs e)
         {
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void ButtonConvert_Click(object sender, EventArgs e)
         {
             if (!loaded_png || !loaded_txt)
             {
                 return;
             }
 
-            bool is_1_empty = textBox2.Text.Length == 0;
-            bool is_2_empty = textBox3.Text.Length == 0;
-            bool is_3_empty = textBox4.Text.Length == 0;
+            bool is_1_empty = TextboxNormalY.Text.Length == 0;
+            bool is_2_empty = TextboxTableY.Text.Length == 0;
+            bool is_3_empty = TextboxUsedY.Text.Length == 0;
             if (is_1_empty && is_2_empty && is_3_empty)
             {
                 return;
@@ -2016,77 +2016,77 @@ namespace V3UnityFontReader
             if (is_2_empty && is_3_empty)
             {
                 // Normal
-                if (textBox2.Text.Length > 0 && int.TryParse(textBox2.Text, out int a) && a > 0)
+                if (TextboxNormalY.Text.Length > 0 && int.TryParse(TextboxNormalY.Text, out int a) && a > 0)
                 {
-                    int toint = int.Parse(textBox2.Text);
-                    textBox3.Text = InterpretY(toint).ToString();
-                    textBox4.Text = InterpretY2(toint).ToString();
-                    //textBox4.Text = (pictureBox1.Size.Height - toint).ToString();
+                    int toint = int.Parse(TextboxNormalY.Text);
+                    TextboxTableY.Text = InterpretY(toint).ToString();
+                    TextboxUsedY.Text = InterpretY2(toint).ToString();
+                    //TextboxUsedY.Text = (PictureBoxImage.Size.Height - toint).ToString();
                 }
                 else
                 {
-                    textBox3.Text = "";
-                    textBox4.Text = "";
+                    TextboxTableY.Text = "";
+                    TextboxUsedY.Text = "";
                 }
             }
 
             if (is_1_empty && is_3_empty)
             {
                 // Table
-                if (textBox3.Text.Length > 0 && int.TryParse(textBox3.Text, out int a) && a > 0)
+                if (TextboxTableY.Text.Length > 0 && int.TryParse(TextboxTableY.Text, out int a) && a > 0)
                 {
-                    int toint = int.Parse(textBox3.Text);
+                    int toint = int.Parse(TextboxTableY.Text);
                     int res1 = NormalizeY(toint);
-                    textBox2.Text = res1.ToString();
-                    textBox4.Text = InterpretY2(res1).ToString();
+                    TextboxNormalY.Text = res1.ToString();
+                    TextboxUsedY.Text = InterpretY2(res1).ToString();
                 }
                 else
                 {
-                    textBox2.Text = "";
-                    textBox4.Text = "";
+                    TextboxNormalY.Text = "";
+                    TextboxUsedY.Text = "";
                 }
             }
 
             if (is_1_empty && is_2_empty)
             {
                 // Used
-                if (textBox4.Text.Length > 0 && int.TryParse(textBox4.Text, out int a) && a > 0)
+                if (TextboxUsedY.Text.Length > 0 && int.TryParse(TextboxUsedY.Text, out int a) && a > 0)
                 {
-                    int toint = int.Parse(textBox4.Text);
+                    int toint = int.Parse(TextboxUsedY.Text);
                     int res1 = NormalizeY2(toint);
-                    textBox2.Text = res1.ToString();
-                    textBox3.Text = InterpretY(res1).ToString();
+                    TextboxNormalY.Text = res1.ToString();
+                    TextboxTableY.Text = InterpretY(res1).ToString();
                 }
                 else
                 {
-                    textBox2.Text = "";
-                    textBox3.Text = "";
+                    TextboxNormalY.Text = "";
+                    TextboxTableY.Text = "";
                 }
             }
         }
 
-        private void button10_Click(object sender, EventArgs e)
+        private void ButtonReset_Click(object sender, EventArgs e)
         {
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
+            TextboxNormalY.Text = "";
+            TextboxTableY.Text = "";
+            TextboxUsedY.Text = "";
         }
 
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
-            if (textBox5.Text.Length > 1)
+            if (TextboxChar.Text.Length > 1)
             {
                 return;
             }
 
-            if (textBox5.Text.Length <= 0)
+            if (TextboxChar.Text.Length <= 0)
             {
                 return;
             }
 
-            char c = textBox5.Text[0];
-            textBox6.Text = "";
-            textBox6.Text += ((uint)c).ToString();
+            char c = TextboxChar.Text[0];
+            TextboxNumber.Text = "";
+            TextboxNumber.Text += ((uint)c).ToString();
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -2110,7 +2110,7 @@ namespace V3UnityFontReader
             fm.LoadCurrentFont();
             fm.SetCurrentFontSize(29); // TODO: editable at runtime
 
-            label6.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
+            LabelFontName.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
