@@ -155,11 +155,6 @@ namespace V3UnityFontReader
             }
 
             using Bitmap partial_bmp = new Bitmap(partial);
-            if (partial_bmp == null)
-            {
-                Debug.WriteLine("partial_bmp is null!");
-                return;
-            }
 
             string glyph_index = path.Substring(path.LastIndexOf("\\") + 1);
             //Debug.WriteLine("1: " + glyph_index);
@@ -174,9 +169,9 @@ namespace V3UnityFontReader
                 return;
             }
 
-            Glyph gg = font.m_GlyphTable[pos];
-            TMPCharacter ch = GetCharacterFromIndex(gg.m_Index);
-            int u_pos = UsedGlyphRectByCharacter(ch);
+            Glyph gg = font.m_GlyphTable[pos]; // Table
+            TMPCharacter ch = GetCharacterFromIndex(gg.m_Index); // Character
+            int u_pos = UsedGlyphRectByCharacter(ch); // Used (pos)
             if (u_pos == -1)
             {
                 Debug.WriteLine("Couldn't find corresponding used glyph for character: " + ch.m_Unicode + " (" +
@@ -188,7 +183,7 @@ namespace V3UnityFontReader
             GlyphRect used = font.m_UsedGlyphRects[u_pos];
 
             rect = used;
-            // Using Y1 here is fine as we just declared that rect = used
+            // Using (Interpret)Y(1) here is fine as we just declared that rect = used
             rectangle = new Rectangle(rect.m_X, InterpretY(rect.m_Y), rect.m_Width, rect.m_Height);
 
             if (rectangle.Width == 0 || rectangle.Height == 0)
@@ -219,11 +214,6 @@ namespace V3UnityFontReader
             }
 
             string[] content = File.ReadAllLines(txtdata);
-            if (content == null)
-            {
-                MessageBox.Show(txtdata, "Null file!");
-                return;
-            }
 
             int lines = content.Length;
             if (lines != 22)
@@ -236,41 +226,38 @@ namespace V3UnityFontReader
             font.m_CharacterTable.Add(new TMPCharacter());
 
             // Read the .txt "line by line"
-            using (StreamReader readtext = new StreamReader(txtdata))
+            font.m_GlyphTable[total_red_data].Read(content[0], 2);
+            font.m_GlyphTable[total_red_data].Read(content[1], 4);
+            font.m_GlyphTable[total_red_data].Read(content[2], 5);
+            font.m_GlyphTable[total_red_data].Read(content[3], 6);
+            font.m_GlyphTable[total_red_data].Read(content[4], 7);
+            font.m_GlyphTable[total_red_data].Read(content[5], 8);
+            font.m_GlyphTable[total_red_data].Read(content[6], 10);
+            font.m_GlyphTable[total_red_data].Read(content[7], 11);
+            font.m_GlyphTable[total_red_data].Read(content[8], 12);
+            font.m_GlyphTable[total_red_data].Read(content[9], 13);
+            font.m_GlyphTable[total_red_data].Read(content[10], 14);
+            font.m_GlyphTable[total_red_data].Read(content[11], 15);
+
+            font.m_CharacterTable[total_red_data].Read(content[13], 2);
+            font.m_CharacterTable[total_red_data].Read(content[14], 3);
+            font.m_CharacterTable[total_red_data].Read(content[15], 4);
+            font.m_CharacterTable[total_red_data].Read(content[16], 5);
+
+            //VerifyCharacterTable();
+
+            //Debug.WriteLine(font.m_CharacterTable[cur_index].m_Unicode);
+
+            // Could be a special case without glyph like a space, \\r or \\n
+            if (!content[18].Contains("SPECIAL"))
             {
-                font.m_GlyphTable[total_red_data].Read(content[0], 2);
-                font.m_GlyphTable[total_red_data].Read(content[1], 4);
-                font.m_GlyphTable[total_red_data].Read(content[2], 5);
-                font.m_GlyphTable[total_red_data].Read(content[3], 6);
-                font.m_GlyphTable[total_red_data].Read(content[4], 7);
-                font.m_GlyphTable[total_red_data].Read(content[5], 8);
-                font.m_GlyphTable[total_red_data].Read(content[6], 10);
-                font.m_GlyphTable[total_red_data].Read(content[7], 11);
-                font.m_GlyphTable[total_red_data].Read(content[8], 12);
-                font.m_GlyphTable[total_red_data].Read(content[9], 13);
-                font.m_GlyphTable[total_red_data].Read(content[10], 14);
-                font.m_GlyphTable[total_red_data].Read(content[11], 15);
+                font.m_UsedGlyphRects.Add(new GlyphRect());
+                font.m_UsedGlyphRects[total_red_glyphs].Read(content[18], 2);
+                font.m_UsedGlyphRects[total_red_glyphs].Read(content[19], 3);
+                font.m_UsedGlyphRects[total_red_glyphs].Read(content[20], 4);
+                font.m_UsedGlyphRects[total_red_glyphs].Read(content[21], 5);
 
-                font.m_CharacterTable[total_red_data].Read(content[13], 2);
-                font.m_CharacterTable[total_red_data].Read(content[14], 3);
-                font.m_CharacterTable[total_red_data].Read(content[15], 4);
-                font.m_CharacterTable[total_red_data].Read(content[16], 5);
-
-                //VerifyCharacterTable();
-
-                //Debug.WriteLine(font.m_CharacterTable[cur_index].m_Unicode);
-
-                // Could be a special case without glyph like a space, \\r or \\n
-                if (!content[18].Contains("SPECIAL"))
-                {
-                    font.m_UsedGlyphRects.Add(new GlyphRect());
-                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[18], 2);
-                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[19], 3);
-                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[20], 4);
-                    font.m_UsedGlyphRects[total_red_glyphs].Read(content[21], 5);
-
-                    total_red_glyphs++;
-                }
+                total_red_glyphs++;
             }
 
             total_red_data++;
@@ -286,11 +273,6 @@ namespace V3UnityFontReader
             }
 
             using Bitmap partial_bmp = new Bitmap(partial);
-            if (partial_bmp == null)
-            {
-                Debug.WriteLine("partial_bmp is null!");
-                return;
-            }
 
             string glyph_index = path.Substring(path.LastIndexOf("\\") + 1);
             //Debug.WriteLine("1: " + glyph_index);
@@ -317,6 +299,7 @@ namespace V3UnityFontReader
             // For some reason, the opacity might be broken?
             using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
+                // TODO: Is this intentional? Above it's SourceOver (commented)
                 g.CompositingMode = CompositingMode.SourceCopy;
                 //g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                 g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));
