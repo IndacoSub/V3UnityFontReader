@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace V3UnityFontReader
 {
     public partial class Form1 : Form
     {
+        private readonly List<SpecialCharacter> specials = new();
         private string cur_filename = "";
         private int cur_index;
         private FontManager fm;
@@ -26,7 +20,6 @@ namespace V3UnityFontReader
         private string png_fn = "";
         private GlyphRect rect;
         private Rectangle rectangle;
-        private readonly List<SpecialCharacter> specials = new();
         private int total_red_data;
         private int total_red_glyphs;
         private int total_red_image;
