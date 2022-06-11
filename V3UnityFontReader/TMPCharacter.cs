@@ -17,7 +17,6 @@ namespace V3UnityFontReader
             switch (index)
             {
                 case 0:
-                    break;
                 case 1:
                     break;
                 case 2:
@@ -41,8 +40,8 @@ namespace V3UnityFontReader
         public string Write(int index, int param)
         {
             string ret = "";
-            string before = "";
-            string after = "";
+            string before;
+            string after;
 
             switch (index)
             {

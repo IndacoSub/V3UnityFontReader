@@ -61,10 +61,12 @@ namespace V3UnityFontReader
             txt_fn = filename;
             cur_index = 0;
             txt_lines = new List<string>();
-            font = new FontStructure();
-            font.m_GlyphTable = new List<Glyph>();
-            font.m_CharacterTable = new List<TMPCharacter>();
-            font.m_UsedGlyphRects = new List<GlyphRect>();
+            font = new FontStructure
+            {
+                m_GlyphTable = new List<Glyph>(),
+                m_CharacterTable = new List<TMPCharacter>(),
+                m_UsedGlyphRects = new List<GlyphRect>()
+            };
 
             string last = "";
             var lines = File.ReadAllLines(txt_fn);
@@ -80,7 +82,6 @@ namespace V3UnityFontReader
                 if (line.Contains("int size ="))
                 {
                     int size = int.Parse(line.Substring(15));
-                    int cont = 0;
                     for (int j = 0; j < size; j++)
                     {
                         int base_i = i + 1;
@@ -142,8 +143,6 @@ namespace V3UnityFontReader
                                 }
                             }
                         }
-
-                        cont++;
                     }
                 }
 
@@ -182,12 +181,6 @@ namespace V3UnityFontReader
                 return;
             }
 
-            if (fm.CurrentFont == null)
-            {
-                MessageBox.Show("Current font is null!");
-                return;
-            }
-
             if (characterin.Length < 1)
             {
                 MessageBox.Show("Invalid character!");
@@ -198,17 +191,11 @@ namespace V3UnityFontReader
 
             // Graphics part
 
-            int startX = 0, startY = 0;
+            int startX = mouseX, startY = mouseY;
             int leftmostX = mouseX;
-            for (int j = 0; j < characterin.Length; j++)
+            foreach (char t in characterin)
             {
-                if (j == 0)
-                {
-                    startX = mouseX;
-                    startY = mouseY;
-                }
-
-                string ch = characterin[j].ToString();
+                string ch = t.ToString();
                 (int retx, int rety) = AttemptNextXY(ch, startX, startY);
                 int newx = startX + 3 * retx + 10; // Arbitrary value just to be sure
                 int newy = startY;
@@ -243,14 +230,9 @@ namespace V3UnityFontReader
             }
 
             string[] content = File.ReadAllLines(txtdata);
-            if (content == null)
-            {
-                MessageBox.Show(txtdata, "Null file!");
-                return;
-            }
 
             int lines = content.Length;
-            if (lines != 22)
+            if (lines != 22) // Expected 22 lines
             {
                 MessageBox.Show(txtdata, "Wrong number of lines (" + lines + ", expected 22)!");
                 return;
@@ -261,41 +243,38 @@ namespace V3UnityFontReader
             GlyphRect urect = new GlyphRect();
 
             // Read the .txt "line by line"
-            using (StreamReader readtext = new StreamReader(txtdata))
+            glyph.Read(content[0], 2);
+            glyph.Read(content[1], 4);
+            glyph.Read(content[2], 5);
+            glyph.Read(content[3], 6);
+            glyph.Read(content[4], 7);
+            glyph.Read(content[5], 8);
+            glyph.Read(content[6], 10);
+            glyph.Read(content[7], 11);
+            glyph.Read(content[8], 12);
+            glyph.Read(content[9], 13);
+            glyph.Read(content[10], 14);
+            glyph.Read(content[11], 15);
+
+            character.Read(content[13], 2);
+            character.Read(content[14], 3);
+            character.Read(content[15], 4);
+            character.Read(content[16], 5);
+
+            //VerifyCharacterTable();
+
+            //Debug.WriteLine(font.m_CharacterTable[cur_index].m_Unicode);
+
+            // Could be a special case without glyph like a space, \\r or \\n
+            if (!content[18].Contains("SPECIAL"))
             {
-                glyph.Read(content[0], 2);
-                glyph.Read(content[1], 4);
-                glyph.Read(content[2], 5);
-                glyph.Read(content[3], 6);
-                glyph.Read(content[4], 7);
-                glyph.Read(content[5], 8);
-                glyph.Read(content[6], 10);
-                glyph.Read(content[7], 11);
-                glyph.Read(content[8], 12);
-                glyph.Read(content[9], 13);
-                glyph.Read(content[10], 14);
-                glyph.Read(content[11], 15);
-
-                character.Read(content[13], 2);
-                character.Read(content[14], 3);
-                character.Read(content[15], 4);
-                character.Read(content[16], 5);
-
-                //VerifyCharacterTable();
-
-                //Debug.WriteLine(font.m_CharacterTable[cur_index].m_Unicode);
-
-                // Could be a special case without glyph like a space, \\r or \\n
-                if (!content[18].Contains("SPECIAL"))
-                {
-                    urect.Read(content[18], 2);
-                    urect.Read(content[19], 3);
-                    urect.Read(content[20], 4);
-                    urect.Read(content[21], 5);
-                }
+                urect.Read(content[18], 2);
+                urect.Read(content[19], 3);
+                urect.Read(content[20], 4);
+                urect.Read(content[21], 5);
             }
 
-            if (urect == null || urect == new GlyphRect())
+            if (urect == new GlyphRect())
             {
                 Debug.WriteLine("Null rect!");
                 return;
@@ -331,6 +310,9 @@ namespace V3UnityFontReader
 
                 using (Bitmap glyph_gfx = new Bitmap(image))
                 {
+                    const int oddx = 0;
+                    const int oddy = 0;
+
                     // The +1 is needed, not sure why that is
                     glyph.m_GlyphRect.m_Width = glyph_gfx.Width + 1;
                     glyph.m_GlyphRect.m_Height = glyph_gfx.Height;
@@ -341,9 +323,9 @@ namespace V3UnityFontReader
                     Debug.WriteLine("Is X odd: " + is_x_odd);
                     Debug.WriteLine("Is Y odd: " + is_y_odd);
                     glyph.m_GlyphRect.m_X =
-                        urect.m_X + (urect.m_Width - glyph.m_GlyphRect.m_Width) / 2 + (is_x_odd ? 0 : 0);
+                        urect.m_X + (urect.m_Width - glyph.m_GlyphRect.m_Width) / 2 + (is_x_odd ? oddx : 0);
                     glyph.m_GlyphRect.m_Y = urect.m_Y + (urect.m_Height - glyph.m_GlyphRect.m_Height) / 2 +
-                                            (is_y_odd ? 0 : 0);
+                                            (is_y_odd ? oddy : 0);
                     //glyph.m_GlyphRect.m_Y = PictureBoxImage.Image.Size.Height - urect.m_Height - glyph.m_GlyphRect.m_Height;
 
                     Rectangle uRectangle = new Rectangle(urect.m_X, urect.m_Y, urect.m_Width, urect.m_Height);
@@ -379,17 +361,20 @@ namespace V3UnityFontReader
 
             PictureBoxImage.Refresh();
 
+            // TODO: Confirm Any vs All
             if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
             {
                 font.m_GlyphTable.Add(glyph);
             }
 
+            // TODO: Confirm Any vs All
             if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == character.m_GlyphIndex))
             {
                 //Debug.WriteLine("Adding to character table!");
                 font.m_CharacterTable.Add(character);
             }
 
+            // TODO: Confirm Any vs All
             if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
             {
                 font.m_UsedGlyphRects.Add(urect);

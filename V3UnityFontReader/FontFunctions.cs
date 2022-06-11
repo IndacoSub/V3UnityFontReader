@@ -9,15 +9,14 @@ namespace V3UnityFontReader
         // TODO: Find a better name!
         private (int, int) AttemptNextXY(string character, int startX, int startY)
         {
-            int ret1 = 0, ret2 = 0;
 
-            Color c = Color.FromArgb(125, 255, 255, 255);
+            Color c = Color.FromArgb(125, 255, 255, 255); // Black with reduced alpha?
             SolidBrush mybrush = new SolidBrush(c);
             PointF point = new PointF(startX, startY);
             StringFormat format = StringFormat.GenericTypographic;
 
-            float char_width = 0, char_height = 0;
-            float spacing_width = 0, spacing_height = 0;
+            float char_width, char_height;
+            float spacing_width, spacing_height;
 
             using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
@@ -26,7 +25,7 @@ namespace V3UnityFontReader
                 //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 g.DrawString(character, fm.CurrentFont, mybrush, point, format);
-                int maxheight = 100;
+                const int maxheight = 100; // Could break with font size > 100
                 SizeF size = g.MeasureString(character.Substring(0, 1), fm.CurrentFont, maxheight, format);
                 char_width = size.Width;
                 char_height = size.Height;
@@ -62,7 +61,10 @@ namespace V3UnityFontReader
             glyph.m_GlyphRect.m_Y = startY;
             glyph.m_Metrics.m_Width = char_width;
             glyph.m_Metrics.m_Height = char_height;
-            glyph.m_Metrics.m_HorizontalBearingX = char_width * 0.025f;
+
+            const double one_fortieth = 0.025f;
+
+            glyph.m_Metrics.m_HorizontalBearingX = char_width * (float)one_fortieth;
             glyph.m_Metrics.m_HorizontalBearingY = glyph.m_Metrics.m_Height - glyph.m_Metrics.m_Height / 10 -
                                                    glyph.m_Metrics.m_HorizontalBearingX / 2;
             bool atsa = AllTheSameAdvance();
@@ -97,22 +99,26 @@ namespace V3UnityFontReader
                 glyph.m_GlyphRect.m_Height += (int)fl;
             }
 
+            // TODO: Confirm Any vs All
             if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
             {
                 font.m_GlyphTable.Add(glyph);
             }
 
-            if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == tmpcharacter.m_GlyphIndex))
+            // TODO: Confirm Any vs All
+            if (!font.m_CharacterTable.Any(cc => cc.m_GlyphIndex == tmpcharacter.m_GlyphIndex))
             {
                 //Debug.WriteLine("Adding to character table!");
                 font.m_CharacterTable.Add(tmpcharacter);
             }
 
+            // TODO: Confirm Any vs All
             if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
             {
                 font.m_UsedGlyphRects.Add(urect);
             }
 
+            // If it's a reasonable amount (performance-wise)
             if (font.m_GlyphTable.Count < 100)
             {
                 font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
@@ -121,8 +127,8 @@ namespace V3UnityFontReader
                     WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
             }
 
-            ret1 = (int)spacing_width;
-            ret2 = (int)spacing_height;
+            int ret1 = (int)spacing_width;
+            int ret2 = (int)spacing_height;
 
             // To account for errors in float->int
             return (ret1 + 1, ret2 + 1);

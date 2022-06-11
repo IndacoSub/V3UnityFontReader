@@ -6,8 +6,7 @@ namespace V3UnityFontReader
 {
     public partial class Form1 : Form
     {
-        private readonly List<SpecialCharacter> specials = new();
-        private string cur_filename = "";
+        private readonly List<SpecialCharacter> specials = new List<SpecialCharacter>();
         private int cur_index;
         private FontManager fm;
         private FontStructure font;
@@ -24,7 +23,7 @@ namespace V3UnityFontReader
         private int total_red_glyphs;
         private int total_red_image;
         private string txt_fn = "";
-        private List<string> txt_lines = new();
+        private List<string> txt_lines = new List<string>();
 
         public Form1()
         {
@@ -32,7 +31,7 @@ namespace V3UnityFontReader
             font = new FontStructure();
             rect = new GlyphRect();
             rectangle = new Rectangle();
-            fm = new FontManager("Calibri");
+            fm = new FontManager("Calibri", float.Parse(TextboxFontSize.Text));
 
             PictureBoxImage.SizeMode = PictureBoxSizeMode.AutoSize;
             ImagePanel.AutoScroll = true;

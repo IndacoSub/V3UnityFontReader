@@ -11,7 +11,6 @@ namespace V3UnityFontReader
     internal class FontManager
     {
         public const int FirstFont = 0;
-        public Color CurrentColor = Color.White;
         public Font CurrentFont;
         public float CurrentFontSize;
         public PrivateFontCollection CustomFonts;
@@ -19,38 +18,28 @@ namespace V3UnityFontReader
         // Use Calibri for the displayed text
         public string DefaultFontName = "Calibri";
 
-        // Use Microsoft Sans Serif for the editable text box
-        public string DefaultFontNameForText = "Microsoft Sans Serif";
         public List<Font> FontList;
 
         public string FontName = "";
         public float FontSize;
-        public int FontSizeForText = 14;
         public bool LoadedFont;
 
-        public FontManager(string init_font)
+#pragma warning disable CS8618
+        public FontManager(string init_font, float size)
         {
-            LoadFont(init_font);
+            LoadFont(init_font, size);
         }
+#pragma warning restore CS8618
 
-        public void LoadByCSFont(string familyname, float fsize, FontStyle style)
+        public void LoadFont(string init_font, float size)
         {
-            CurrentFont = new Font(familyname, fsize, style);
-            CurrentFontSize = fsize;
-        }
-
-        public void LoadFont(string init_font)
-        {
-            string familyName = "";
-            string familyNameAndStyle = "";
-            FontFamily[] fontFamilies;
             CustomFonts = new PrivateFontCollection();
             FontSize = new float();
             FontSize = 0.0f;
 
             FontList = new List<Font>();
 
-            FontSize = 29.0f;
+            FontSize = size;
 
             CurrentFontSize = FontSize;
 
@@ -84,26 +73,26 @@ namespace V3UnityFontReader
 
             if (LoadedFont)
             {
-                fontFamilies = CustomFonts.Families;
+                FontFamily[] fontFamilies = CustomFonts.Families;
 
                 for (int j = 0, count = fontFamilies.Length; j < count; ++j)
                 {
                     // Get the font family name.
-                    familyName = fontFamilies[j].Name;
+                    string familyName = fontFamilies[j].Name;
 
                     FontName = familyName;
 
-                    LoadRegular(fontFamilies[j], familyName, familyNameAndStyle);
+                    LoadRegular(fontFamilies[j], familyName);
 
-                    LoadBold(fontFamilies[j], familyName, familyNameAndStyle);
+                    LoadBold(fontFamilies[j], familyName);
 
-                    LoadItalic(fontFamilies[j], familyName, familyNameAndStyle);
+                    LoadItalic(fontFamilies[j], familyName);
 
-                    LoadBoldItalic(fontFamilies[j], familyName, familyNameAndStyle);
+                    LoadBoldItalic(fontFamilies[j], familyName);
 
-                    LoadUnderline(fontFamilies[j], familyName, familyNameAndStyle);
+                    LoadUnderline(fontFamilies[j], familyName);
 
-                    LoadStrikeout(fontFamilies[j], familyName, familyNameAndStyle);
+                    LoadStrikeout(fontFamilies[j], familyName);
                 }
             }
         }
@@ -125,14 +114,11 @@ namespace V3UnityFontReader
             CustomFonts.AddFontFile(file);
         }
 
-        public void LoadRegular(FontFamily ff, string fn, string fns)
+        public void LoadRegular(FontFamily ff, string fn)
         {
             // Is the regular style available?
             if (ff.IsStyleAvailable(FontStyle.Regular))
             {
-                fns = "";
-                fns = fns + fn;
-                fns = fns + " Regular";
 
                 Font regFont = new Font(
                     fn,
@@ -149,14 +135,11 @@ namespace V3UnityFontReader
             CurrentFont = new Font(CurrentFont.Name, size);
         }
 
-        public void LoadBold(FontFamily ff, string fn, string fns)
+        public void LoadBold(FontFamily ff, string fn)
         {
             // Is the bold style available?
             if (ff.IsStyleAvailable(FontStyle.Bold))
             {
-                fns = "";
-                fns = fns + fn;
-                fns = fns + " Bold";
 
                 Font boldFont = new Font(
                     fn,
@@ -168,14 +151,11 @@ namespace V3UnityFontReader
             }
         }
 
-        public void LoadItalic(FontFamily ff, string fn, string fns)
+        public void LoadItalic(FontFamily ff, string fn)
         {
             // Is the italic style available?
             if (ff.IsStyleAvailable(FontStyle.Italic))
             {
-                fns = "";
-                fns = fns + ff;
-                fns = fns + " Italic";
 
                 Font italicFont = new Font(
                     fn,
@@ -187,14 +167,11 @@ namespace V3UnityFontReader
             }
         }
 
-        public void LoadBoldItalic(FontFamily ff, string fn, string fns)
+        public void LoadBoldItalic(FontFamily ff, string fn)
         {
             // Is the bold italic style available?
             if (ff.IsStyleAvailable(FontStyle.Italic) && ff.IsStyleAvailable(FontStyle.Bold))
             {
-                fns = "";
-                fns = fns + fn;
-                fns = fns + "BoldItalic";
 
                 Font italicFont = new Font(
                     fn,
@@ -206,14 +183,11 @@ namespace V3UnityFontReader
             }
         }
 
-        public void LoadUnderline(FontFamily ff, string fn, string fns)
+        public void LoadUnderline(FontFamily ff, string fn)
         {
             // Is the underline style available?
             if (ff.IsStyleAvailable(FontStyle.Underline))
             {
-                fns = "";
-                fns = fns + fn;
-                fns = fns + " Underline";
 
                 Font underlineFont = new Font(
                     fn,
@@ -225,14 +199,11 @@ namespace V3UnityFontReader
             }
         }
 
-        public void LoadStrikeout(FontFamily ff, string fn, string fns)
+        public void LoadStrikeout(FontFamily ff, string fn)
         {
             // Is the strikeout style available?
             if (ff.IsStyleAvailable(FontStyle.Strikeout))
             {
-                fns = "";
-                fns = fns + fn;
-                fns = fns + " Strikeout";
 
                 Font strikeFont = new Font(
                     fn,
@@ -242,12 +213,6 @@ namespace V3UnityFontReader
 
                 FontList.Add(strikeFont);
             }
-        }
-
-        public Font CreateFont(string name, int size, FontStyle style)
-        {
-            Font replacementFont = new Font(name, size, style);
-            return replacementFont;
         }
 
         /*
