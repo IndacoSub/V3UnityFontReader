@@ -312,8 +312,10 @@ namespace V3UnityFontReader
             // 
             this.TextboxFontSize.Location = new System.Drawing.Point(741, 672);
             this.TextboxFontSize.Name = "TextboxFontSize";
+            this.TextboxFontSize.PlaceholderText = "29";
             this.TextboxFontSize.Size = new System.Drawing.Size(100, 23);
             this.TextboxFontSize.TabIndex = 26;
+            this.TextboxFontSize.Text = "29";
             // 
             // LabelFontSize
             // 
@@ -328,8 +330,10 @@ namespace V3UnityFontReader
             // 
             this.TextboxX.Location = new System.Drawing.Point(567, 672);
             this.TextboxX.Name = "TextboxX";
+            this.TextboxX.PlaceholderText = "4.0";
             this.TextboxX.Size = new System.Drawing.Size(100, 23);
             this.TextboxX.TabIndex = 28;
+            this.TextboxX.Text = "4.0";
             // 
             // LabelX
             // 

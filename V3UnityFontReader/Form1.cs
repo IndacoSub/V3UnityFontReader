@@ -1623,9 +1623,10 @@ namespace V3UnityFontReader
 
             if (CheckboxAddX.Checked)
             {
+                float fl = float.Parse(TextboxX.Text);
                 // (HACK) Why does this even work?!
-                glyph.m_Metrics.m_Height += 4.0f;
-                glyph.m_GlyphRect.m_Height += 4;
+                glyph.m_Metrics.m_Height += fl;
+                glyph.m_GlyphRect.m_Height += (int)fl;
             }
 
             if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
@@ -2106,9 +2107,11 @@ namespace V3UnityFontReader
                 return;
             }
 
+            int size = int.Parse(TextboxFontSize.Text);
+
             fm = new FontManager(fn);
             fm.LoadCurrentFont();
-            fm.SetCurrentFontSize(29); // TODO: editable at runtime
+            fm.SetCurrentFontSize(size); // TODO: editable at runtime
 
             LabelFontName.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
         }
