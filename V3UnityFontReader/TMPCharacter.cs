@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace V3UnityFontReader
 {
@@ -21,7 +17,6 @@ namespace V3UnityFontReader
             switch (index)
             {
                 case 0:
-                    break;
                 case 1:
                     break;
                 case 2:
@@ -45,8 +40,8 @@ namespace V3UnityFontReader
         public string Write(int index, int param)
         {
             string ret = "";
-            string before = "";
-            string after = "";
+            string before;
+            string after;
 
             switch (index)
             {

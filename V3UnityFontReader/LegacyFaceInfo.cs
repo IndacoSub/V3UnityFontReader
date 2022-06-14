@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+/*
 namespace V3UnityFontReader
 {
     internal class LegacyFaceInfo
@@ -29,6 +26,6 @@ namespace V3UnityFontReader
         public float Padding = 0;
         public float AtlasWidth = 0;
         public float AtlasHeight = 0;
-
     }
 }
+*/

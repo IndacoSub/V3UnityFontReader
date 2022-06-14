@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+/*
 namespace V3UnityFontReader
 {
     internal class FaceInfo
@@ -27,6 +24,6 @@ namespace V3UnityFontReader
         public float m_StrikethroughOffset = 0;
         public float m_StrikethroughThickness = 0;
         public float m_TabWidth = 0;
-
     }
 }
+*/

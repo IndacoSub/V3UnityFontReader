@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace V3UnityFontReader
 {
     internal class GlyphRect
     {
-
         public Int32 m_X = 0;
         public Int32 m_Y = 0;
         public Int32 m_Width = 0;
@@ -22,7 +17,6 @@ namespace V3UnityFontReader
             switch (index)
             {
                 case 0:
-                    break;
                 case 1:
                     break;
                 case 2:
@@ -46,8 +40,8 @@ namespace V3UnityFontReader
         public string Write(int index, int param, bool free)
         {
             string ret = "";
-            string before = "";
-            string after = "";
+            string before;
+            string after;
 
             switch (index)
             {

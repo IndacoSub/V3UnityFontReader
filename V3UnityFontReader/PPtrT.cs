@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+/*
 namespace V3UnityFontReader
 {
     internal class PPtrT<T>
@@ -12,3 +9,4 @@ namespace V3UnityFontReader
         public Int64 m_PathID = 0;
     }
 }
+*/
