@@ -35,6 +35,7 @@ namespace V3UnityFontReader
             font.m_FreeGlyphRects = free_after;
         }
 
+        // Actually used but commented out
         private void VerifyUsedGlyphTable()
         {
             Debug.WriteLine("Old rects: " + font.m_UsedGlyphRects.Count);

@@ -157,9 +157,9 @@ namespace V3UnityFontReader
             using Bitmap partial_bmp = new Bitmap(partial);
 
             string glyph_index = path.Substring(path.LastIndexOf("\\") + 1);
-            //Debug.WriteLine("1: " + glyph_index);
+            //Debug.WriteLine("Initial glyph index: " + glyph_index);
             glyph_index = glyph_index.Substring(0, glyph_index.IndexOf('.'));
-            //Debug.WriteLine("2: " + glyph_index);
+            //Debug.WriteLine("After substring " + glyph_index);
             Debug.WriteLine("Glyph index: " + glyph_index);
             int glyph_index_int = int.Parse(glyph_index);
             int pos = GetGlyphByIndex((uint)glyph_index_int);
@@ -238,7 +238,7 @@ namespace V3UnityFontReader
             font.m_GlyphTable[total_red_data].Read(content[9], 13);
             font.m_GlyphTable[total_red_data].Read(content[10], 14);
             font.m_GlyphTable[total_red_data].Read(content[11], 15);
-
+            // Line 12 = empty?
             font.m_CharacterTable[total_red_data].Read(content[13], 2);
             font.m_CharacterTable[total_red_data].Read(content[14], 3);
             font.m_CharacterTable[total_red_data].Read(content[15], 4);
@@ -252,6 +252,7 @@ namespace V3UnityFontReader
             if (!content[18].Contains("SPECIAL"))
             {
                 font.m_UsedGlyphRects.Add(new GlyphRect());
+                // Line 17 = empty?
                 font.m_UsedGlyphRects[total_red_glyphs].Read(content[18], 2);
                 font.m_UsedGlyphRects[total_red_glyphs].Read(content[19], 3);
                 font.m_UsedGlyphRects[total_red_glyphs].Read(content[20], 4);
@@ -275,9 +276,9 @@ namespace V3UnityFontReader
             using Bitmap partial_bmp = new Bitmap(partial);
 
             string glyph_index = path.Substring(path.LastIndexOf("\\") + 1);
-            //Debug.WriteLine("1: " + glyph_index);
+            //Debug.WriteLine("Initial glyph index: " + glyph_index);
             glyph_index = glyph_index.Substring(0, glyph_index.IndexOf('.'));
-            //Debug.WriteLine("2: " + glyph_index);
+            //Debug.WriteLine("After substring: " + glyph_index);
             int glyph_index_int = int.Parse(glyph_index);
             int pos = GetGlyphByIndex((uint)glyph_index_int);
             if (pos == -1)
@@ -299,7 +300,7 @@ namespace V3UnityFontReader
             // For some reason, the opacity might be broken?
             using (Graphics g = Graphics.FromImage(PictureBoxImage.Image))
             {
-                // TODO: Is this intentional? Above it's SourceOver (commented)
+                // TODO: Is this intentional? Above it's SourceOver (commented out)
                 g.CompositingMode = CompositingMode.SourceCopy;
                 //g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                 g.DrawImageUnscaled(partial_bmp, rect.m_X, InterpretY(rect.m_Y));

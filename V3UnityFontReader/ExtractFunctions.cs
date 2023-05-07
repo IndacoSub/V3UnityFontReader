@@ -79,7 +79,7 @@ namespace V3UnityFontReader
             int gl_index = GetGlyphByIndex(ch.m_GlyphIndex);
             if (gl_index == -1)
             {
-                Debug.WriteLine("Couldn't find corresponding glyph!");
+                Debug.WriteLine("Couldn't find corresponding glyph to" + ch.m_GlyphIndex + " !");
                 return;
             }
 
