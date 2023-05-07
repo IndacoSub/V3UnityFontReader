@@ -249,9 +249,9 @@ namespace V3UnityFontReader
 
             int size = int.Parse(TextboxFontSize.Text);
 
-            fm = new FontManager(fn);
+            fm = new FontManager(fn, float.Parse(TextboxFontSize.Text));
             fm.LoadCurrentFont();
-            fm.SetCurrentFontSize(size); // TODO: editable at runtime
+            fm.SetCurrentFontSize(size);
 
             LabelFontName.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
         }

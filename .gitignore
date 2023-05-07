@@ -99,3 +99,8 @@ V3UnityFontReader/bin/Release/net5.0-windows/extracted/OPPOSans-R SDF-sharedasse
 V3UnityFontReader/obj/Debug/net5.0-windows/refint/V3UnityFontReader.dll
 V3UnityFontReader/obj/Release/net5.0-windows/refint/V3UnityFontReader.dll
 V3UnityFontReader/obj/Release/net5.0-windows/V3UnityFontReader.csproj.BuildWithSkipAnalyzers
+*.1
+*.vsidx
+*.v2
+*.lock
+*.bak

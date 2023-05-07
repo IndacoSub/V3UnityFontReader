@@ -31,11 +31,13 @@ namespace V3UnityFontReader
 
             //Debug.WriteLine("Width: " + font.m_UsedGlyphRects[cur_index].m_Width + ", Height: " + font.m_UsedGlyphRects[cur_index].m_Height);
 
+            var ugr = font.m_UsedGlyphRects[cur_index];
+
             // Y is inverted and does not account for the character itself
-            rectangle = new Rectangle(font.m_UsedGlyphRects[cur_index].m_X,
-                InterpretY2(font.m_UsedGlyphRects[cur_index].m_Y),
-                font.m_UsedGlyphRects[cur_index].m_Width,
-                font.m_UsedGlyphRects[cur_index].m_Height);
+            rectangle = new Rectangle(ugr.m_X,
+                InterpretY2(ugr.m_Y),
+                ugr.m_Width,
+                ugr.m_Height);
 
             using (Graphics gr = Graphics.FromImage(PictureBoxImage.Image))
             {

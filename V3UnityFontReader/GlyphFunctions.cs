@@ -18,7 +18,8 @@ namespace V3UnityFontReader
                         PictureBoxImage.Image.Size.Height - used.m_Y - used.m_Height, used.m_Width, used.m_Height);
                     Rectangle freerect = new Rectangle(free.m_X,
                         PictureBoxImage.Image.Size.Height - free.m_Y - free.m_Height, free.m_Width, free.m_Height);
-                    if (usedrect.IntersectsWith(freerect) || freerect.IntersectsWith(usedrect))
+
+                    if (usedrect.IntersectsWith(freerect))
                     {
                         Debug.WriteLine("Intersects!");
                         continue;
@@ -42,12 +43,12 @@ namespace V3UnityFontReader
 
             foreach (GlyphRect gr in font.m_UsedGlyphRects)
             {
+                // X/Y can be 0 but not width or height
                 if (gr.m_Width == 0 || gr.m_Height == 0)
                 {
                     continue;
                 }
 
-                TMPCharacter ch = new TMPCharacter();
                 foreach (Glyph g in font.m_GlyphTable)
                 {
                     foreach (TMPCharacter c in font.m_CharacterTable)
@@ -85,19 +86,15 @@ namespace V3UnityFontReader
             font.m_UsedGlyphRects = rects;
         }
 
+        // Get glyph from table (not used)
         private int GetGlyphByIndex(uint index)
         {
             //Debug.WriteLine("Index: " + index);
             //Debug.WriteLine("m_GlyphTable.Count: " + font.m_GlyphTable.Count);
-            for (int i = 0; i < font.m_GlyphTable.Count; i++)
-            {
-                if (index == font.m_GlyphTable[i].m_Index)
-                {
-                    return i;
-                }
-            }
 
-            return -1;
+            int ret = font.m_GlyphTable.FindIndex(gl => gl.m_Index == index);
+
+            return ret;
         }
     }
 }

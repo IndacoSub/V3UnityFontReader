@@ -69,11 +69,6 @@ namespace V3UnityFontReader
 
             GlyphRect gr = font.m_UsedGlyphRects[cont];
             TMPCharacter ch = WhatIsInsideGlyphRect(gr);
-            if (ch == null)
-            {
-                Debug.WriteLine("Null character!");
-                return;
-            }
 
             if (ch == new TMPCharacter())
             {
@@ -81,34 +76,27 @@ namespace V3UnityFontReader
                 return;
             }
 
-            int gl = GetGlyphByIndex(ch.m_GlyphIndex);
-            if (gl == -1)
+            int gl_index = GetGlyphByIndex(ch.m_GlyphIndex);
+            if (gl_index == -1)
             {
                 Debug.WriteLine("Couldn't find corresponding glyph!");
                 return;
             }
 
             string newpng = Path.Combine(uglyphs, ch.m_GlyphIndex.ToString()) + ".png";
-            Glyph g = font.m_GlyphTable[gl];
+            Glyph g = font.m_GlyphTable[gl_index];
             Rectangle glyph_rect = new Rectangle(g.m_GlyphRect.m_X, g.m_GlyphRect.m_Y, g.m_GlyphRect.m_Width,
                 g.m_GlyphRect.m_Height);
-            Rectangle actual_rect = new Rectangle();
-            actual_rect.X = glyph_rect.X - gr.m_X;
-            actual_rect.Y = glyph_rect.Y - gr.m_Y;
-            actual_rect.Width = glyph_rect.Width;
-            // For some reason it doesn't work correctly without this -1???
-            actual_rect.Height = glyph_rect.Height - 1;
+            Rectangle actual_rect = new Rectangle
+            {
+                X = glyph_rect.X - gr.m_X,
+                Y = glyph_rect.Y - gr.m_Y,
+                Width = glyph_rect.Width,
+                Height = glyph_rect.Height - 1 // For some reason it doesn't work correctly without this -1???
+            };
+
             using (Bitmap full_image = new Bitmap(png_fn))
             {
-                /*
-                if(ch.m_Unicode == 'j')
-                {
-                    Debug.WriteLine("GlyphRect X: " + glyph_rect.X + ", Y: " + glyph_rect.Y + ", W: " + rectangle.Width + ", H: " + rectangle.Height);
-                    Debug.WriteLine("Rectangle X: " + rectangle.X + ", Y: " + rectangle.Y + ", W: " + rectangle.Width + ", H: " + rectangle.Height);
-                    Debug.WriteLine("ActualRectX: " + actual_rect.X + ", Y: " + actual_rect.Y + ", W: " + actual_rect.Width + ", H: " + actual_rect.Height);
-                }
-                */
-
                 using (Bitmap portion = full_image.Clone(rectangle, full_image.PixelFormat))
                 {
                     using (Graphics graphics = Graphics.FromImage(portion))
