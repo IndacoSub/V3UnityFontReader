@@ -29,7 +29,7 @@ Exemptions:
 	
 Thanks to Radu (https://github.com/RaduMC) and Perfare (https://github.com/Perfare) for developing AssetStudio (https://github.com/Perfare/AssetStudio).
 
-Thanks to DerPopo for developing the "original" UABE (development of UABE had paused for a few years, leading to the creation of UABEA, but in April 2022 the UABE project was revived).
+Thanks to DerPopo/SeriousCache (https://github.com/SeriousCache) for developing the "original" UABE (development of UABE had paused for a few years, leading to the creation of UABEA, but in April 2022 the UABE project was revived).
 
 Thanks to nesrak1 (https://github.com/nesrak1) for developing UABEA (https://github.com/nesrak1/UABEA).
 
