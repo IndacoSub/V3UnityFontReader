@@ -38,6 +38,7 @@ Thanks to nesrak1 (https://github.com/nesrak1) for developing UABEA (https://git
 	UABEA's license can be found here: https://github.com/nesrak1/UABEA/blob/master/license
 
 The aforementioned projects have been really useful for the development of this tool.
+They are not used *inside* the program, as it makes no use of them directly, so LICENSE files are not included.
 
 Thanks to the members of the "SPIRAL" Discord server and the Spiral Framework project (https://spiralframework.info/ -- source code here: https://github.com/SpiralFramework/Spiral).
 	 
