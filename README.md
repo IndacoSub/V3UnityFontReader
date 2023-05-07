@@ -35,7 +35,7 @@ Thanks to nesrak1 (https://github.com/nesrak1) for developing UABEA (https://git
 
 	AssetStudio and UABEA are both licensed under the MIT License.
 	AssetStudio's license can be found here: https://github.com/Perfare/AssetStudio/blob/master/LICENSE
-	UABEA's license can be found here: https://github.com/nesrak1/UABEA/blob/a8cdf1b809ced458e57f053bc94b0c5ebb10a0f4/license
+	UABEA's license can be found here: https://github.com/nesrak1/UABEA/blob/master/license
 
 The aforementioned projects have been really useful for the development of this tool.
 
