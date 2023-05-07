@@ -15,6 +15,7 @@ namespace V3UnityFontReader
 {
     public partial class Form1 : Form
     {
+        FontManager fm;
         Rectangle rectangle;
         FontStructure font;
         GlyphRect rect;
@@ -39,6 +40,50 @@ namespace V3UnityFontReader
             font = new FontStructure();
             rect = new GlyphRect();
             rectangle = new Rectangle();
+            fm = new FontManager("Calibri");
+
+            pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            panel1.AutoScroll = true;
+        }
+
+        // Ask input (https://stackoverflow.com/questions/97097/what-is-the-c-sharp-version-of-vb-nets-inputdialog)
+        public static DialogResult ShowInputDialog(ref string input)
+        {
+            System.Drawing.Size size = new System.Drawing.Size(200, 70);
+            Form inputBox = new Form();
+
+            inputBox.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            inputBox.ClientSize = size;
+            inputBox.Text = "Name";
+
+            System.Windows.Forms.TextBox textBox = new TextBox();
+            textBox.Size = new System.Drawing.Size(size.Width - 10, 23);
+            textBox.Location = new System.Drawing.Point(5, 5);
+            textBox.Text = input;
+            inputBox.Controls.Add(textBox);
+
+            Button okButton = new Button();
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(75, 23);
+            okButton.Text = "&OK";
+            okButton.Location = new System.Drawing.Point(size.Width - 80 - 80, 39);
+            inputBox.Controls.Add(okButton);
+
+            Button cancelButton = new Button();
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.Text = "&Cancel";
+            cancelButton.Location = new System.Drawing.Point(size.Width - 80, 39);
+            inputBox.Controls.Add(cancelButton);
+
+            inputBox.AcceptButton = okButton;
+            inputBox.CancelButton = cancelButton;
+
+            DialogResult result = inputBox.ShowDialog();
+            input = textBox.Text;
+            return result;
         }
 
         void DeleteUsedFreeGlyphs()
@@ -1365,14 +1410,241 @@ namespace V3UnityFontReader
 
             if(e.X > pictureBox1.Image.Size.Width)
             {
+                MessageBox.Show("Invalid mouse-X!");
                 return;
             }
 
             if(e.Y > pictureBox1.Image.Size.Height)
             {
+                MessageBox.Show("Invalid mouse-Y!");
                 return;
             }
 
+            if (fm.LoadedFont)
+            {
+                LoadCustomFromFont(e.X, e.Y);
+            } else
+            {
+                LoadCustomFromFiles(e.X, e.Y);
+            }
+        }
+
+        private uint GetFirstFreeGlyph()
+        {
+            uint glyph = 0;
+
+            for(uint j = 1; j < 30000; j++)
+            {
+                glyph = j;
+                bool found = false;
+                foreach(Glyph g in font.m_GlyphTable)
+                {
+                    found |= g.m_Index == (int)glyph;
+                }
+
+                if(!found)
+                {
+                    TMPCharacter ch = new TMPCharacter();
+                    ch.m_GlyphIndex = glyph;
+                    if(IsSpecial(ch))
+                    {
+                        continue;
+                    }
+                    break;
+                }
+            }
+
+            return glyph;
+        }
+
+        private bool AllTheSameAdvance()
+        {
+            float last = font.m_GlyphTable[0].m_Metrics.m_HorizontalAdvance;
+            foreach(Glyph g in font.m_GlyphTable)
+            {
+                if(last != g.m_Metrics.m_HorizontalAdvance)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Remove spaces (https://stackoverflow.com/questions/6219454/efficient-way-to-remove-all-whitespace-from-string)
+        public static string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
+        }
+
+        // TODO: Find a better name!
+        private (int, int) Unknown1(string character, int startX, int startY)
+        {
+            int ret1 = 0, ret2 = 0;
+
+            Color c = Color.FromArgb(125, 255, 255, 255);
+            SolidBrush mybrush = new SolidBrush(c);
+            PointF point = new PointF(startX, startY);
+            StringFormat format = StringFormat.GenericTypographic;
+
+            float char_width = 0, char_height = 0;
+            float spacing_width = 0, spacing_height = 0;
+
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                g.DrawString(character, fm.CurrentFont, mybrush, point, format);
+                int maxheight = 100;
+                SizeF size = g.MeasureString(character.Substring(0, 1), fm.CurrentFont, maxheight, format);
+                char_width = size.Width;
+                char_height = size.Height;
+                //format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                SizeF spacing = g.MeasureString(" " + character.Substring(0, 1) + " ", fm.CurrentFont, maxheight, format);
+                spacing_width = spacing.Width;
+                spacing_height = spacing.Height;
+                //g.Save();
+            }
+
+            pictureBox1.Refresh();
+
+            //MessageBox.Show("Width: " + char_width + ", Height: " + char_height);
+            //MessageBox.Show("TS Width: " + spacing_width + ", TS Height: " + spacing_height);
+
+            // Data part
+
+            TMPCharacter tmpcharacter = new TMPCharacter();
+            Glyph glyph = new Glyph();
+            GlyphRect urect = new GlyphRect();
+
+            // Get first free glyph
+            uint free_glyph = GetFirstFreeGlyph();
+
+            tmpcharacter.m_Unicode = character[0];
+            tmpcharacter.m_GlyphIndex = free_glyph;
+
+            glyph.m_Index = (int)free_glyph;
+            glyph.m_GlyphRect.m_Width = (int)char_width;
+            glyph.m_GlyphRect.m_Height = (int)char_height;
+            glyph.m_GlyphRect.m_X = startX;
+            glyph.m_GlyphRect.m_Y = startY;
+            glyph.m_Metrics.m_Width = char_width;
+            glyph.m_Metrics.m_Height = char_height;
+            glyph.m_Metrics.m_HorizontalBearingX = char_width * 0.025f;
+            glyph.m_Metrics.m_HorizontalBearingY = glyph.m_Metrics.m_Height - (glyph.m_Metrics.m_Height / 10) - (glyph.m_Metrics.m_HorizontalBearingX / 2);
+            bool atsa = AllTheSameAdvance();
+            if (!atsa)
+            {
+                glyph.m_Metrics.m_HorizontalAdvance = glyph.m_Metrics.m_Width + (glyph.m_Metrics.m_HorizontalBearingX * 2);
+            }
+            else
+            {
+                glyph.m_Metrics.m_HorizontalAdvance = font.m_GlyphTable[0].m_Metrics.m_HorizontalAdvance;
+            }
+
+            urect.m_Width = (int)spacing_width;
+            urect.m_Height = (int)spacing_height + 1;
+            //urect.m_Width = (int)char_width + 1;
+            //urect.m_Height = (int)char_height + 1;
+
+            // I have no idea
+            urect.m_X = (glyph.m_GlyphRect.m_X - (glyph.m_GlyphRect.m_Width - urect.m_Width) / 2);
+            urect.m_Y = (glyph.m_GlyphRect.m_Y - (glyph.m_GlyphRect.m_Height - urect.m_Height) / 2);
+
+            glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
+            urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
+
+            if(checkBox1.Checked)
+            {
+                // (HACK) Why does this even work?!
+                glyph.m_Metrics.m_Height += 4.0f;
+                glyph.m_GlyphRect.m_Height += 4;
+            }
+
+            if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
+            {
+                font.m_GlyphTable.Add(glyph);
+            }
+
+            if (!font.m_CharacterTable.Any(c => c.m_GlyphIndex == tmpcharacter.m_GlyphIndex))
+            {
+                //Debug.WriteLine("Adding to character table!");
+                font.m_CharacterTable.Add(tmpcharacter);
+            }
+
+            if (!font.m_UsedGlyphRects.Any(u => u.m_X == urect.m_X && u.m_Y == urect.m_Y))
+            {
+                font.m_UsedGlyphRects.Add(urect);
+            }
+
+            if (font.m_GlyphTable.Count < 100)
+            {
+                font.m_GlyphTable.Sort((x, y) => x.m_Index.CompareTo(y.m_Index));
+                font.m_CharacterTable.Sort((x, y) => x.m_Unicode.CompareTo(y.m_Unicode));
+                font.m_UsedGlyphRects.Sort((x, y) => WhatIsInsideGlyphRect(x).m_GlyphIndex.CompareTo(WhatIsInsideGlyphRect(y).m_GlyphIndex));
+            }
+
+            ret1 = (int)spacing_width;
+            ret2 = (int)spacing_height;
+
+            // To account for errors in float->int
+            return (ret1 + 1, ret2 + 1);
+        }
+
+        private void LoadCustomFromFont(int mouseX, int mouseY)
+        {
+            string characterin = "";
+            var res = ShowInputDialog(ref characterin);
+            if(res != DialogResult.OK)
+            {
+                return;
+            }
+
+            if(fm.CurrentFont == null)
+            {
+                MessageBox.Show("Current font is null!");
+                return;
+            }
+
+            if(characterin.Length < 1)
+            {
+                MessageBox.Show("Invalid character!");
+                return;
+            }
+
+            characterin = RemoveWhitespace(characterin);
+
+            // Graphics part
+
+            int startX = 0, startY = 0;
+            int leftmostX = mouseX;
+            for(int j = 0; j < characterin.Length; j++)
+            {
+                if(j == 0)
+                {
+                    startX = mouseX;
+                    startY = mouseY;
+                }
+                string ch = characterin[j].ToString();
+                (int retx, int rety) = Unknown1(ch, startX, startY);
+                int newx = startX + (3*retx) + 10; // Arbitrary value just to be sure
+                int newy = startY;
+                if(newx >= pictureBox1.Width || newx + (6*retx) + 10 >= pictureBox1.Width) // Arbitrary value just to be extra sure
+                {
+                    newx = leftmostX;
+                    newy = startY + (3*rety) + 10; // Arbitrary value just to be sure
+                }
+
+                startX = newx;
+                startY = newy;
+            }
+        }
+
+        private void LoadCustomFromFiles(int mouseX, int mouseY)
+        {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "*.TXT files|*.txt";
             ofd.Multiselect = false;
@@ -1442,7 +1714,7 @@ namespace V3UnityFontReader
                 }
             }
 
-            if(urect == null || urect == new GlyphRect())
+            if (urect == null || urect == new GlyphRect())
             {
                 Debug.WriteLine("Null rect!");
                 return;
@@ -1451,7 +1723,7 @@ namespace V3UnityFontReader
             string image = Directory.GetCurrentDirectory();
             image = Path.Combine(image, "extracted", Path.GetFileNameWithoutExtension(txt_fn), "images");
             image = Path.Combine(image, character.m_GlyphIndex + ".png");
-            if(!File.Exists(image))
+            if (!File.Exists(image))
             {
                 Debug.WriteLine("PNG image not found: " + image);
                 return;
@@ -1460,7 +1732,7 @@ namespace V3UnityFontReader
             string uglyph_image = Directory.GetCurrentDirectory();
             uglyph_image = Path.Combine(uglyph_image, "extracted", Path.GetFileNameWithoutExtension(txt_fn), "used_glyphs");
             uglyph_image = Path.Combine(uglyph_image, character.m_GlyphIndex + ".png");
-            if(!File.Exists(uglyph_image))
+            if (!File.Exists(uglyph_image))
             {
                 Debug.WriteLine("Used PNG image not found: " + uglyph_image);
                 return;
@@ -1472,8 +1744,8 @@ namespace V3UnityFontReader
             {
                 urect.m_Width = used_gfx.Width;
                 urect.m_Height = used_gfx.Height;
-                urect.m_X = e.X;
-                urect.m_Y = e.Y;
+                urect.m_X = mouseX;
+                urect.m_Y = mouseY;
 
                 using (Bitmap glyph_gfx = new Bitmap(image))
                 {
@@ -1505,14 +1777,14 @@ namespace V3UnityFontReader
             glyph.m_GlyphRect.m_Y = pictureBox1.Image.Size.Height - glyph.m_GlyphRect.m_Y - glyph.m_GlyphRect.m_Height;
             urect.m_Y = pictureBox1.Image.Size.Height - urect.m_Y - urect.m_Height;
 
-            if(glyph.m_GlyphRect.m_Y < 0)
+            if (glyph.m_GlyphRect.m_Y < 0)
             {
                 pictureBox1.Image = new Bitmap(bak);
                 pictureBox1.Refresh();
                 return;
             }
 
-            if(urect.m_Y < 0)
+            if (urect.m_Y < 0)
             {
                 pictureBox1.Image = new Bitmap(bak);
                 pictureBox1.Refresh();
@@ -1521,7 +1793,7 @@ namespace V3UnityFontReader
 
             pictureBox1.Refresh();
 
-            if(!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
+            if (!font.m_GlyphTable.Any(g => g.m_Index == glyph.m_Index))
             {
                 font.m_GlyphTable.Add(glyph);
             }
@@ -1545,7 +1817,7 @@ namespace V3UnityFontReader
             saveFileDialog.Filter = "*.TXT files|*.txt";
             saveFileDialog.Title = "Save file as .TXT (if you want)";
             saveFileDialog.FileName = txtdata;
-            if(saveFileDialog.ShowDialog() != DialogResult.OK)
+            if (saveFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
@@ -1580,7 +1852,8 @@ namespace V3UnityFontReader
                     writetext.WriteLine("m_UsedGlyphRects.m_Y = " + urect.m_Y.ToString());
                     writetext.WriteLine("m_UsedGlyphRects.m_Width = " + urect.m_Width.ToString());
                     writetext.WriteLine("m_UsedGlyphRects.m_Height = " + urect.m_Height.ToString());
-                } else
+                }
+                else
                 {
                     writetext.WriteLine("SPECIAL");
                     writetext.WriteLine("SPECIAL");
@@ -1745,6 +2018,35 @@ namespace V3UnityFontReader
             char c = textBox5.Text[0];
             textBox6.Text = "";
             textBox6.Text += ((uint)c).ToString();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "TrueType Font files (*.ttf)|*.ttf|All files (*.*)|*.*";
+            var res = ofd.ShowDialog();
+            if(res != DialogResult.OK)
+            {
+                return;
+            }
+
+            string fn = ofd.FileName;
+            if(!File.Exists(fn))
+            {
+                // Invalid file
+                return;
+            }
+
+            fm = new FontManager(fn);
+            fm.LoadCurrentFont();
+            fm.SetCurrentFontSize(29); // TODO: editable at runtime
+
+            label6.Text = "Font: " + Path.GetFileNameWithoutExtension(fn);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
