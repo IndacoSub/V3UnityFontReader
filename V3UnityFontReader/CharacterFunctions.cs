@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace V3UnityFontReader
 {
-    public partial class Form1
+    public partial class V3UnityFontReader
     {
         private bool IsSpecial(TMPCharacter ch)
         {

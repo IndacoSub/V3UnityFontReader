@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace V3UnityFontReader
 {
-    public partial class Form1
+    public partial class V3UnityFontReader
     {
         private void SaveImageAsPNG()
         {

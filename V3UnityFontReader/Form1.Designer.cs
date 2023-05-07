@@ -2,421 +2,421 @@
 
 namespace V3UnityFontReader
 {
-    partial class Form1
-    {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class V3UnityFontReader
+	{
+		/// <summary>
+		///  Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		///  Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            this.ButtonLoadPNG = new System.Windows.Forms.Button();
-            this.ButtonLoadTXT = new System.Windows.Forms.Button();
-            this.ButtonPrevious = new System.Windows.Forms.Button();
-            this.ButtonNext = new System.Windows.Forms.Button();
-            this.InfoTextbox = new System.Windows.Forms.TextBox();
-            this.ButtonExtractAll = new System.Windows.Forms.Button();
-            this.ButtonReplaceAll = new System.Windows.Forms.Button();
-            this.ButtonSavePNG = new System.Windows.Forms.Button();
-            this.ButtonSaveTXT = new System.Windows.Forms.Button();
-            this.TextboxNormalY = new System.Windows.Forms.TextBox();
-            this.LabelConversion1 = new System.Windows.Forms.Label();
-            this.TextboxTableY = new System.Windows.Forms.TextBox();
-            this.TextboxUsedY = new System.Windows.Forms.TextBox();
-            this.LabelConversion2 = new System.Windows.Forms.Label();
-            this.LabelNormalY = new System.Windows.Forms.Label();
-            this.LabelTableY = new System.Windows.Forms.Label();
-            this.LabelUsedY = new System.Windows.Forms.Label();
-            this.ButtonConvert = new System.Windows.Forms.Button();
-            this.ButtonReset = new System.Windows.Forms.Button();
-            this.TextboxChar = new System.Windows.Forms.TextBox();
-            this.TextboxNumber = new System.Windows.Forms.TextBox();
-            this.ImagePanel = new System.Windows.Forms.Panel();
-            this.PictureBoxImage = new System.Windows.Forms.PictureBox();
-            this.ButtonOpenFont = new System.Windows.Forms.Button();
-            this.LabelFontName = new System.Windows.Forms.Label();
-            this.CheckboxAddX = new System.Windows.Forms.CheckBox();
-            this.TextboxFontSize = new System.Windows.Forms.TextBox();
-            this.LabelFontSize = new System.Windows.Forms.Label();
-            this.TextboxX = new System.Windows.Forms.TextBox();
-            this.LabelX = new System.Windows.Forms.Label();
-            this.ImagePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxImage)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // ButtonLoadPNG
-            // 
-            this.ButtonLoadPNG.Location = new System.Drawing.Point(18, 583);
-            this.ButtonLoadPNG.Name = "ButtonLoadPNG";
-            this.ButtonLoadPNG.Size = new System.Drawing.Size(69, 34);
-            this.ButtonLoadPNG.TabIndex = 1;
-            this.ButtonLoadPNG.Text = "Load PNG";
-            this.ButtonLoadPNG.UseVisualStyleBackColor = true;
-            this.ButtonLoadPNG.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // ButtonLoadTXT
-            // 
-            this.ButtonLoadTXT.Location = new System.Drawing.Point(18, 619);
-            this.ButtonLoadTXT.Name = "ButtonLoadTXT";
-            this.ButtonLoadTXT.Size = new System.Drawing.Size(69, 36);
-            this.ButtonLoadTXT.TabIndex = 2;
-            this.ButtonLoadTXT.Text = "Load TXT";
-            this.ButtonLoadTXT.UseVisualStyleBackColor = true;
-            this.ButtonLoadTXT.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // ButtonPrevious
-            // 
-            this.ButtonPrevious.Location = new System.Drawing.Point(93, 583);
-            this.ButtonPrevious.Name = "ButtonPrevious";
-            this.ButtonPrevious.Size = new System.Drawing.Size(68, 34);
-            this.ButtonPrevious.TabIndex = 3;
-            this.ButtonPrevious.Text = "<---";
-            this.ButtonPrevious.UseVisualStyleBackColor = true;
-            this.ButtonPrevious.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // ButtonNext
-            // 
-            this.ButtonNext.Location = new System.Drawing.Point(167, 583);
-            this.ButtonNext.Name = "ButtonNext";
-            this.ButtonNext.Size = new System.Drawing.Size(71, 34);
-            this.ButtonNext.TabIndex = 4;
-            this.ButtonNext.Text = "--->";
-            this.ButtonNext.UseVisualStyleBackColor = true;
-            this.ButtonNext.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // InfoTextbox
-            // 
-            this.InfoTextbox.Location = new System.Drawing.Point(330, 588);
-            this.InfoTextbox.Name = "InfoTextbox";
-            this.InfoTextbox.ReadOnly = true;
-            this.InfoTextbox.Size = new System.Drawing.Size(681, 23);
-            this.InfoTextbox.TabIndex = 5;
-            this.InfoTextbox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // ButtonExtractAll
-            // 
-            this.ButtonExtractAll.Location = new System.Drawing.Point(93, 619);
-            this.ButtonExtractAll.Name = "ButtonExtractAll";
-            this.ButtonExtractAll.Size = new System.Drawing.Size(68, 36);
-            this.ButtonExtractAll.TabIndex = 6;
-            this.ButtonExtractAll.Text = "ExtractAll";
-            this.ButtonExtractAll.UseVisualStyleBackColor = true;
-            this.ButtonExtractAll.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // ButtonReplaceAll
-            // 
-            this.ButtonReplaceAll.Location = new System.Drawing.Point(167, 619);
-            this.ButtonReplaceAll.Name = "ButtonReplaceAll";
-            this.ButtonReplaceAll.Size = new System.Drawing.Size(71, 36);
-            this.ButtonReplaceAll.TabIndex = 7;
-            this.ButtonReplaceAll.Text = "ReplaceAll";
-            this.ButtonReplaceAll.UseVisualStyleBackColor = true;
-            this.ButtonReplaceAll.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // ButtonSavePNG
-            // 
-            this.ButtonSavePNG.Location = new System.Drawing.Point(244, 583);
-            this.ButtonSavePNG.Name = "ButtonSavePNG";
-            this.ButtonSavePNG.Size = new System.Drawing.Size(71, 34);
-            this.ButtonSavePNG.TabIndex = 8;
-            this.ButtonSavePNG.Text = "Save .PNG";
-            this.ButtonSavePNG.UseVisualStyleBackColor = true;
-            this.ButtonSavePNG.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // ButtonSaveTXT
-            // 
-            this.ButtonSaveTXT.Location = new System.Drawing.Point(244, 619);
-            this.ButtonSaveTXT.Name = "ButtonSaveTXT";
-            this.ButtonSaveTXT.Size = new System.Drawing.Size(71, 36);
-            this.ButtonSaveTXT.TabIndex = 9;
-            this.ButtonSaveTXT.Text = "Save .TXT";
-            this.ButtonSaveTXT.UseVisualStyleBackColor = true;
-            this.ButtonSaveTXT.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // TextboxNormalY
-            // 
-            this.TextboxNormalY.Location = new System.Drawing.Point(428, 627);
-            this.TextboxNormalY.Name = "TextboxNormalY";
-            this.TextboxNormalY.Size = new System.Drawing.Size(95, 23);
-            this.TextboxNormalY.TabIndex = 10;
-            // 
-            // LabelConversion1
-            // 
-            this.LabelConversion1.AutoSize = true;
-            this.LabelConversion1.Location = new System.Drawing.Point(528, 629);
-            this.LabelConversion1.Name = "LabelConversion1";
-            this.LabelConversion1.Size = new System.Drawing.Size(31, 15);
-            this.LabelConversion1.TabIndex = 11;
-            this.LabelConversion1.Text = "<=>";
-            // 
-            // TextboxTableY
-            // 
-            this.TextboxTableY.Location = new System.Drawing.Point(567, 627);
-            this.TextboxTableY.Name = "TextboxTableY";
-            this.TextboxTableY.Size = new System.Drawing.Size(112, 23);
-            this.TextboxTableY.TabIndex = 12;
-            // 
-            // TextboxUsedY
-            // 
-            this.TextboxUsedY.Location = new System.Drawing.Point(723, 627);
-            this.TextboxUsedY.Name = "TextboxUsedY";
-            this.TextboxUsedY.Size = new System.Drawing.Size(118, 23);
-            this.TextboxUsedY.TabIndex = 13;
-            // 
-            // LabelConversion2
-            // 
-            this.LabelConversion2.AutoSize = true;
-            this.LabelConversion2.Location = new System.Drawing.Point(683, 629);
-            this.LabelConversion2.Name = "LabelConversion2";
-            this.LabelConversion2.Size = new System.Drawing.Size(31, 15);
-            this.LabelConversion2.TabIndex = 14;
-            this.LabelConversion2.Text = "<=>";
-            // 
-            // LabelNormalY
-            // 
-            this.LabelNormalY.AutoSize = true;
-            this.LabelNormalY.Location = new System.Drawing.Point(444, 611);
-            this.LabelNormalY.Name = "LabelNormalY";
-            this.LabelNormalY.Size = new System.Drawing.Size(57, 15);
-            this.LabelNormalY.TabIndex = 15;
-            this.LabelNormalY.Text = "Normal Y";
-            // 
-            // LabelTableY
-            // 
-            this.LabelTableY.AutoSize = true;
-            this.LabelTableY.Location = new System.Drawing.Point(576, 611);
-            this.LabelTableY.Name = "LabelTableY";
-            this.LabelTableY.Size = new System.Drawing.Size(89, 15);
-            this.LabelTableY.TabIndex = 16;
-            this.LabelTableY.Text = "Table Rect Y (C)";
-            this.LabelTableY.Click += new System.EventHandler(this.LabelTableY_Click);
-            // 
-            // LabelUsedY
-            // 
-            this.LabelUsedY.AutoSize = true;
-            this.LabelUsedY.Location = new System.Drawing.Point(723, 611);
-            this.LabelUsedY.Name = "LabelUsedY";
-            this.LabelUsedY.Size = new System.Drawing.Size(96, 15);
-            this.LabelUsedY.TabIndex = 17;
-            this.LabelUsedY.Text = "Used Glyph Y (C)";
-            this.LabelUsedY.Click += new System.EventHandler(this.LabelUsedY_Click);
-            // 
-            // ButtonConvert
-            // 
-            this.ButtonConvert.Location = new System.Drawing.Point(845, 611);
-            this.ButtonConvert.Name = "ButtonConvert";
-            this.ButtonConvert.Size = new System.Drawing.Size(72, 23);
-            this.ButtonConvert.TabIndex = 18;
-            this.ButtonConvert.Text = "Convert";
-            this.ButtonConvert.UseVisualStyleBackColor = true;
-            this.ButtonConvert.Click += new System.EventHandler(this.ButtonConvert_Click);
-            // 
-            // ButtonReset
-            // 
-            this.ButtonReset.Location = new System.Drawing.Point(845, 638);
-            this.ButtonReset.Name = "ButtonReset";
-            this.ButtonReset.Size = new System.Drawing.Size(72, 23);
-            this.ButtonReset.TabIndex = 19;
-            this.ButtonReset.Text = "Reset";
-            this.ButtonReset.UseVisualStyleBackColor = true;
-            this.ButtonReset.Click += new System.EventHandler(this.ButtonReset_Click);
-            // 
-            // TextboxChar
-            // 
-            this.TextboxChar.Location = new System.Drawing.Point(922, 613);
-            this.TextboxChar.Name = "TextboxChar";
-            this.TextboxChar.Size = new System.Drawing.Size(100, 23);
-            this.TextboxChar.TabIndex = 20;
-            this.TextboxChar.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
-            // 
-            // TextboxNumber
-            // 
-            this.TextboxNumber.Location = new System.Drawing.Point(922, 638);
-            this.TextboxNumber.Name = "TextboxNumber";
-            this.TextboxNumber.ReadOnly = true;
-            this.TextboxNumber.Size = new System.Drawing.Size(100, 23);
-            this.TextboxNumber.TabIndex = 21;
-            // 
-            // ImagePanel
-            // 
-            this.ImagePanel.Controls.Add(this.PictureBoxImage);
-            this.ImagePanel.Location = new System.Drawing.Point(1, 1);
-            this.ImagePanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ImagePanel.Name = "ImagePanel";
-            this.ImagePanel.Size = new System.Drawing.Size(1021, 577);
-            this.ImagePanel.TabIndex = 22;
-            // 
-            // PictureBoxImage
-            // 
-            this.PictureBoxImage.Location = new System.Drawing.Point(0, 0);
-            this.PictureBoxImage.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.PictureBoxImage.Name = "PictureBoxImage";
-            this.PictureBoxImage.Size = new System.Drawing.Size(999, 559);
-            this.PictureBoxImage.TabIndex = 0;
-            this.PictureBoxImage.TabStop = false;
-            this.PictureBoxImage.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureBoxImage_Click);
-            // 
-            // ButtonOpenFont
-            // 
-            this.ButtonOpenFont.Location = new System.Drawing.Point(330, 619);
-            this.ButtonOpenFont.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ButtonOpenFont.Name = "ButtonOpenFont";
-            this.ButtonOpenFont.Size = new System.Drawing.Size(82, 36);
-            this.ButtonOpenFont.TabIndex = 23;
-            this.ButtonOpenFont.Text = "OpenFont";
-            this.ButtonOpenFont.UseVisualStyleBackColor = true;
-            this.ButtonOpenFont.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // LabelFontName
-            // 
-            this.LabelFontName.AutoSize = true;
-            this.LabelFontName.Location = new System.Drawing.Point(712, 654);
-            this.LabelFontName.Name = "LabelFontName";
-            this.LabelFontName.Size = new System.Drawing.Size(66, 15);
-            this.LabelFontName.TabIndex = 24;
-            this.LabelFontName.Text = "Font: None";
-            // 
-            // CheckboxAddX
-            // 
-            this.CheckboxAddX.AutoSize = true;
-            this.CheckboxAddX.Location = new System.Drawing.Point(869, 674);
-            this.CheckboxAddX.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.CheckboxAddX.Name = "CheckboxAddX";
-            this.CheckboxAddX.Size = new System.Drawing.Size(142, 19);
-            this.CheckboxAddX.TabIndex = 25;
-            this.CheckboxAddX.Text = "Font \"+x\" height hack";
-            this.CheckboxAddX.UseVisualStyleBackColor = true;
-            this.CheckboxAddX.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // TextboxFontSize
-            // 
-            this.TextboxFontSize.Location = new System.Drawing.Point(741, 672);
-            this.TextboxFontSize.Name = "TextboxFontSize";
-            this.TextboxFontSize.PlaceholderText = "29";
-            this.TextboxFontSize.Size = new System.Drawing.Size(100, 23);
-            this.TextboxFontSize.TabIndex = 26;
-            this.TextboxFontSize.Text = "29";
-            // 
-            // LabelFontSize
-            // 
-            this.LabelFontSize.AutoSize = true;
-            this.LabelFontSize.Location = new System.Drawing.Point(678, 675);
-            this.LabelFontSize.Name = "LabelFontSize";
-            this.LabelFontSize.Size = new System.Drawing.Size(57, 15);
-            this.LabelFontSize.TabIndex = 27;
-            this.LabelFontSize.Text = "Font Size:";
-            // 
-            // TextboxX
-            // 
-            this.TextboxX.Location = new System.Drawing.Point(567, 672);
-            this.TextboxX.Name = "TextboxX";
-            this.TextboxX.PlaceholderText = "4.0";
-            this.TextboxX.Size = new System.Drawing.Size(100, 23);
-            this.TextboxX.TabIndex = 28;
-            this.TextboxX.Text = "4.0";
-            // 
-            // LabelX
-            // 
-            this.LabelX.AutoSize = true;
-            this.LabelX.Location = new System.Drawing.Point(544, 675);
-            this.LabelX.Name = "LabelX";
-            this.LabelX.Size = new System.Drawing.Size(17, 15);
-            this.LabelX.TabIndex = 29;
-            this.LabelX.Text = "X:";
-            // 
-            // Form1
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1023, 703);
-            this.Controls.Add(this.LabelX);
-            this.Controls.Add(this.TextboxX);
-            this.Controls.Add(this.LabelFontSize);
-            this.Controls.Add(this.TextboxFontSize);
-            this.Controls.Add(this.CheckboxAddX);
-            this.Controls.Add(this.LabelFontName);
-            this.Controls.Add(this.ButtonOpenFont);
-            this.Controls.Add(this.ImagePanel);
-            this.Controls.Add(this.TextboxNumber);
-            this.Controls.Add(this.TextboxChar);
-            this.Controls.Add(this.ButtonReset);
-            this.Controls.Add(this.ButtonConvert);
-            this.Controls.Add(this.LabelUsedY);
-            this.Controls.Add(this.LabelTableY);
-            this.Controls.Add(this.LabelNormalY);
-            this.Controls.Add(this.LabelConversion2);
-            this.Controls.Add(this.TextboxUsedY);
-            this.Controls.Add(this.TextboxTableY);
-            this.Controls.Add(this.LabelConversion1);
-            this.Controls.Add(this.TextboxNormalY);
-            this.Controls.Add(this.ButtonSaveTXT);
-            this.Controls.Add(this.ButtonSavePNG);
-            this.Controls.Add(this.ButtonReplaceAll);
-            this.Controls.Add(this.ButtonExtractAll);
-            this.Controls.Add(this.InfoTextbox);
-            this.Controls.Add(this.ButtonNext);
-            this.Controls.Add(this.ButtonPrevious);
-            this.Controls.Add(this.ButtonLoadTXT);
-            this.Controls.Add(this.ButtonLoadPNG);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.ImagePanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxImage)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+		/// <summary>
+		///  Required method for Designer support - do not modify
+		///  the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			ButtonLoadPNG = new Button();
+			ButtonLoadTXT = new Button();
+			ButtonPrevious = new Button();
+			ButtonNext = new Button();
+			InfoTextbox = new TextBox();
+			ButtonExtractAll = new Button();
+			ButtonReplaceAll = new Button();
+			ButtonSavePNG = new Button();
+			ButtonSaveTXT = new Button();
+			TextboxNormalY = new TextBox();
+			LabelConversion1 = new Label();
+			TextboxTableY = new TextBox();
+			TextboxUsedY = new TextBox();
+			LabelConversion2 = new Label();
+			LabelNormalY = new Label();
+			LabelTableY = new Label();
+			LabelUsedY = new Label();
+			ButtonConvert = new Button();
+			ButtonReset = new Button();
+			TextboxChar = new TextBox();
+			TextboxNumber = new TextBox();
+			ImagePanel = new Panel();
+			PictureBoxImage = new PictureBox();
+			ButtonOpenFont = new Button();
+			LabelFontName = new Label();
+			CheckboxAddX = new CheckBox();
+			TextboxFontSize = new TextBox();
+			LabelFontSize = new Label();
+			TextboxX = new TextBox();
+			LabelX = new Label();
+			ImagePanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)PictureBoxImage).BeginInit();
+			SuspendLayout();
+			// 
+			// ButtonLoadPNG
+			// 
+			ButtonLoadPNG.Location = new System.Drawing.Point(18, 583);
+			ButtonLoadPNG.Name = "ButtonLoadPNG";
+			ButtonLoadPNG.Size = new System.Drawing.Size(69, 34);
+			ButtonLoadPNG.TabIndex = 1;
+			ButtonLoadPNG.Text = "Load PNG";
+			ButtonLoadPNG.UseVisualStyleBackColor = true;
+			ButtonLoadPNG.Click += button1_Click;
+			// 
+			// ButtonLoadTXT
+			// 
+			ButtonLoadTXT.Location = new System.Drawing.Point(18, 619);
+			ButtonLoadTXT.Name = "ButtonLoadTXT";
+			ButtonLoadTXT.Size = new System.Drawing.Size(69, 36);
+			ButtonLoadTXT.TabIndex = 2;
+			ButtonLoadTXT.Text = "Load TXT";
+			ButtonLoadTXT.UseVisualStyleBackColor = true;
+			ButtonLoadTXT.Click += button2_Click;
+			// 
+			// ButtonPrevious
+			// 
+			ButtonPrevious.Location = new System.Drawing.Point(93, 583);
+			ButtonPrevious.Name = "ButtonPrevious";
+			ButtonPrevious.Size = new System.Drawing.Size(68, 34);
+			ButtonPrevious.TabIndex = 3;
+			ButtonPrevious.Text = "<---";
+			ButtonPrevious.UseVisualStyleBackColor = true;
+			ButtonPrevious.Click += button3_Click;
+			// 
+			// ButtonNext
+			// 
+			ButtonNext.Location = new System.Drawing.Point(167, 583);
+			ButtonNext.Name = "ButtonNext";
+			ButtonNext.Size = new System.Drawing.Size(71, 34);
+			ButtonNext.TabIndex = 4;
+			ButtonNext.Text = "--->";
+			ButtonNext.UseVisualStyleBackColor = true;
+			ButtonNext.Click += button4_Click;
+			// 
+			// InfoTextbox
+			// 
+			InfoTextbox.Location = new System.Drawing.Point(330, 588);
+			InfoTextbox.Name = "InfoTextbox";
+			InfoTextbox.ReadOnly = true;
+			InfoTextbox.Size = new System.Drawing.Size(681, 23);
+			InfoTextbox.TabIndex = 5;
+			InfoTextbox.TextChanged += textBox1_TextChanged;
+			// 
+			// ButtonExtractAll
+			// 
+			ButtonExtractAll.Location = new System.Drawing.Point(93, 619);
+			ButtonExtractAll.Name = "ButtonExtractAll";
+			ButtonExtractAll.Size = new System.Drawing.Size(68, 36);
+			ButtonExtractAll.TabIndex = 6;
+			ButtonExtractAll.Text = "ExtractAll";
+			ButtonExtractAll.UseVisualStyleBackColor = true;
+			ButtonExtractAll.Click += button5_Click;
+			// 
+			// ButtonReplaceAll
+			// 
+			ButtonReplaceAll.Location = new System.Drawing.Point(167, 619);
+			ButtonReplaceAll.Name = "ButtonReplaceAll";
+			ButtonReplaceAll.Size = new System.Drawing.Size(71, 36);
+			ButtonReplaceAll.TabIndex = 7;
+			ButtonReplaceAll.Text = "ReplaceAll";
+			ButtonReplaceAll.UseVisualStyleBackColor = true;
+			ButtonReplaceAll.Click += button6_Click;
+			// 
+			// ButtonSavePNG
+			// 
+			ButtonSavePNG.Location = new System.Drawing.Point(244, 583);
+			ButtonSavePNG.Name = "ButtonSavePNG";
+			ButtonSavePNG.Size = new System.Drawing.Size(71, 34);
+			ButtonSavePNG.TabIndex = 8;
+			ButtonSavePNG.Text = "Save .PNG";
+			ButtonSavePNG.UseVisualStyleBackColor = true;
+			ButtonSavePNG.Click += button7_Click;
+			// 
+			// ButtonSaveTXT
+			// 
+			ButtonSaveTXT.Location = new System.Drawing.Point(244, 619);
+			ButtonSaveTXT.Name = "ButtonSaveTXT";
+			ButtonSaveTXT.Size = new System.Drawing.Size(71, 36);
+			ButtonSaveTXT.TabIndex = 9;
+			ButtonSaveTXT.Text = "Save .TXT";
+			ButtonSaveTXT.UseVisualStyleBackColor = true;
+			ButtonSaveTXT.Click += button8_Click;
+			// 
+			// TextboxNormalY
+			// 
+			TextboxNormalY.Location = new System.Drawing.Point(428, 627);
+			TextboxNormalY.Name = "TextboxNormalY";
+			TextboxNormalY.Size = new System.Drawing.Size(95, 23);
+			TextboxNormalY.TabIndex = 10;
+			// 
+			// LabelConversion1
+			// 
+			LabelConversion1.AutoSize = true;
+			LabelConversion1.Location = new System.Drawing.Point(528, 629);
+			LabelConversion1.Name = "LabelConversion1";
+			LabelConversion1.Size = new System.Drawing.Size(31, 15);
+			LabelConversion1.TabIndex = 11;
+			LabelConversion1.Text = "<=>";
+			// 
+			// TextboxTableY
+			// 
+			TextboxTableY.Location = new System.Drawing.Point(567, 627);
+			TextboxTableY.Name = "TextboxTableY";
+			TextboxTableY.Size = new System.Drawing.Size(112, 23);
+			TextboxTableY.TabIndex = 12;
+			// 
+			// TextboxUsedY
+			// 
+			TextboxUsedY.Location = new System.Drawing.Point(723, 627);
+			TextboxUsedY.Name = "TextboxUsedY";
+			TextboxUsedY.Size = new System.Drawing.Size(118, 23);
+			TextboxUsedY.TabIndex = 13;
+			// 
+			// LabelConversion2
+			// 
+			LabelConversion2.AutoSize = true;
+			LabelConversion2.Location = new System.Drawing.Point(683, 629);
+			LabelConversion2.Name = "LabelConversion2";
+			LabelConversion2.Size = new System.Drawing.Size(31, 15);
+			LabelConversion2.TabIndex = 14;
+			LabelConversion2.Text = "<=>";
+			// 
+			// LabelNormalY
+			// 
+			LabelNormalY.AutoSize = true;
+			LabelNormalY.Location = new System.Drawing.Point(444, 611);
+			LabelNormalY.Name = "LabelNormalY";
+			LabelNormalY.Size = new System.Drawing.Size(57, 15);
+			LabelNormalY.TabIndex = 15;
+			LabelNormalY.Text = "Normal Y";
+			// 
+			// LabelTableY
+			// 
+			LabelTableY.AutoSize = true;
+			LabelTableY.Location = new System.Drawing.Point(576, 611);
+			LabelTableY.Name = "LabelTableY";
+			LabelTableY.Size = new System.Drawing.Size(89, 15);
+			LabelTableY.TabIndex = 16;
+			LabelTableY.Text = "Table Rect Y (C)";
+			LabelTableY.Click += LabelTableY_Click;
+			// 
+			// LabelUsedY
+			// 
+			LabelUsedY.AutoSize = true;
+			LabelUsedY.Location = new System.Drawing.Point(723, 611);
+			LabelUsedY.Name = "LabelUsedY";
+			LabelUsedY.Size = new System.Drawing.Size(96, 15);
+			LabelUsedY.TabIndex = 17;
+			LabelUsedY.Text = "Used Glyph Y (C)";
+			LabelUsedY.Click += LabelUsedY_Click;
+			// 
+			// ButtonConvert
+			// 
+			ButtonConvert.Location = new System.Drawing.Point(845, 611);
+			ButtonConvert.Name = "ButtonConvert";
+			ButtonConvert.Size = new System.Drawing.Size(72, 23);
+			ButtonConvert.TabIndex = 18;
+			ButtonConvert.Text = "Convert";
+			ButtonConvert.UseVisualStyleBackColor = true;
+			ButtonConvert.Click += ButtonConvert_Click;
+			// 
+			// ButtonReset
+			// 
+			ButtonReset.Location = new System.Drawing.Point(845, 638);
+			ButtonReset.Name = "ButtonReset";
+			ButtonReset.Size = new System.Drawing.Size(72, 23);
+			ButtonReset.TabIndex = 19;
+			ButtonReset.Text = "Reset";
+			ButtonReset.UseVisualStyleBackColor = true;
+			ButtonReset.Click += ButtonReset_Click;
+			// 
+			// TextboxChar
+			// 
+			TextboxChar.Location = new System.Drawing.Point(922, 613);
+			TextboxChar.Name = "TextboxChar";
+			TextboxChar.Size = new System.Drawing.Size(100, 23);
+			TextboxChar.TabIndex = 20;
+			TextboxChar.TextChanged += textBox5_TextChanged;
+			// 
+			// TextboxNumber
+			// 
+			TextboxNumber.Location = new System.Drawing.Point(922, 638);
+			TextboxNumber.Name = "TextboxNumber";
+			TextboxNumber.ReadOnly = true;
+			TextboxNumber.Size = new System.Drawing.Size(100, 23);
+			TextboxNumber.TabIndex = 21;
+			// 
+			// ImagePanel
+			// 
+			ImagePanel.Controls.Add(PictureBoxImage);
+			ImagePanel.Location = new System.Drawing.Point(1, 1);
+			ImagePanel.Margin = new Padding(3, 2, 3, 2);
+			ImagePanel.Name = "ImagePanel";
+			ImagePanel.Size = new System.Drawing.Size(1021, 577);
+			ImagePanel.TabIndex = 22;
+			// 
+			// PictureBoxImage
+			// 
+			PictureBoxImage.Location = new System.Drawing.Point(0, 0);
+			PictureBoxImage.Margin = new Padding(3, 2, 3, 2);
+			PictureBoxImage.Name = "PictureBoxImage";
+			PictureBoxImage.Size = new System.Drawing.Size(999, 559);
+			PictureBoxImage.TabIndex = 0;
+			PictureBoxImage.TabStop = false;
+			PictureBoxImage.MouseClick += PictureBoxImage_Click;
+			// 
+			// ButtonOpenFont
+			// 
+			ButtonOpenFont.Location = new System.Drawing.Point(330, 619);
+			ButtonOpenFont.Margin = new Padding(3, 2, 3, 2);
+			ButtonOpenFont.Name = "ButtonOpenFont";
+			ButtonOpenFont.Size = new System.Drawing.Size(82, 36);
+			ButtonOpenFont.TabIndex = 23;
+			ButtonOpenFont.Text = "OpenFont";
+			ButtonOpenFont.UseVisualStyleBackColor = true;
+			ButtonOpenFont.Click += button11_Click;
+			// 
+			// LabelFontName
+			// 
+			LabelFontName.AutoSize = true;
+			LabelFontName.Location = new System.Drawing.Point(712, 654);
+			LabelFontName.Name = "LabelFontName";
+			LabelFontName.Size = new System.Drawing.Size(66, 15);
+			LabelFontName.TabIndex = 24;
+			LabelFontName.Text = "Font: None";
+			// 
+			// CheckboxAddX
+			// 
+			CheckboxAddX.AutoSize = true;
+			CheckboxAddX.Location = new System.Drawing.Point(847, 673);
+			CheckboxAddX.Margin = new Padding(3, 2, 3, 2);
+			CheckboxAddX.Name = "CheckboxAddX";
+			CheckboxAddX.Size = new System.Drawing.Size(150, 19);
+			CheckboxAddX.TabIndex = 25;
+			CheckboxAddX.Text = "Font \"+x\" height (hack)";
+			CheckboxAddX.UseVisualStyleBackColor = true;
+			CheckboxAddX.CheckedChanged += checkBox1_CheckedChanged;
+			// 
+			// TextboxFontSize
+			// 
+			TextboxFontSize.Location = new System.Drawing.Point(741, 672);
+			TextboxFontSize.Name = "TextboxFontSize";
+			TextboxFontSize.PlaceholderText = "29";
+			TextboxFontSize.Size = new System.Drawing.Size(100, 23);
+			TextboxFontSize.TabIndex = 26;
+			TextboxFontSize.Text = "29";
+			// 
+			// LabelFontSize
+			// 
+			LabelFontSize.AutoSize = true;
+			LabelFontSize.Location = new System.Drawing.Point(678, 675);
+			LabelFontSize.Name = "LabelFontSize";
+			LabelFontSize.Size = new System.Drawing.Size(57, 15);
+			LabelFontSize.TabIndex = 27;
+			LabelFontSize.Text = "Font Size:";
+			// 
+			// TextboxX
+			// 
+			TextboxX.Location = new System.Drawing.Point(567, 672);
+			TextboxX.Name = "TextboxX";
+			TextboxX.PlaceholderText = "4.0";
+			TextboxX.Size = new System.Drawing.Size(100, 23);
+			TextboxX.TabIndex = 28;
+			TextboxX.Text = "4.0";
+			// 
+			// LabelX
+			// 
+			LabelX.AutoSize = true;
+			LabelX.Location = new System.Drawing.Point(544, 675);
+			LabelX.Name = "LabelX";
+			LabelX.Size = new System.Drawing.Size(17, 15);
+			LabelX.TabIndex = 29;
+			LabelX.Text = "X:";
+			// 
+			// V3UnityFontReader
+			// 
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(1023, 703);
+			Controls.Add(LabelX);
+			Controls.Add(TextboxX);
+			Controls.Add(LabelFontSize);
+			Controls.Add(TextboxFontSize);
+			Controls.Add(CheckboxAddX);
+			Controls.Add(LabelFontName);
+			Controls.Add(ButtonOpenFont);
+			Controls.Add(ImagePanel);
+			Controls.Add(TextboxNumber);
+			Controls.Add(TextboxChar);
+			Controls.Add(ButtonReset);
+			Controls.Add(ButtonConvert);
+			Controls.Add(LabelUsedY);
+			Controls.Add(LabelTableY);
+			Controls.Add(LabelNormalY);
+			Controls.Add(LabelConversion2);
+			Controls.Add(TextboxUsedY);
+			Controls.Add(TextboxTableY);
+			Controls.Add(LabelConversion1);
+			Controls.Add(TextboxNormalY);
+			Controls.Add(ButtonSaveTXT);
+			Controls.Add(ButtonSavePNG);
+			Controls.Add(ButtonReplaceAll);
+			Controls.Add(ButtonExtractAll);
+			Controls.Add(InfoTextbox);
+			Controls.Add(ButtonNext);
+			Controls.Add(ButtonPrevious);
+			Controls.Add(ButtonLoadTXT);
+			Controls.Add(ButtonLoadPNG);
+			MinimumSize = new System.Drawing.Size(1039, 742);
+			Name = "V3UnityFontReader";
+			Text = "V3UnityFontReader";
+			ImagePanel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)PictureBoxImage).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
+		}
 
-        }
-
-        #endregion
-        private System.Windows.Forms.Button ButtonLoadPNG;
-        private System.Windows.Forms.Button ButtonLoadTXT;
-        private System.Windows.Forms.Button ButtonPrevious;
-        private System.Windows.Forms.Button ButtonNext;
-        private System.Windows.Forms.TextBox InfoTextbox;
-        private System.Windows.Forms.Button ButtonExtractAll;
-        private System.Windows.Forms.Button ButtonReplaceAll;
-        private System.Windows.Forms.Button ButtonSavePNG;
-        private System.Windows.Forms.Button ButtonSaveTXT;
-        private System.Windows.Forms.TextBox TextboxNormalY;
-        private System.Windows.Forms.Label LabelConversion1;
-        private System.Windows.Forms.TextBox TextboxTableY;
-        private System.Windows.Forms.TextBox TextboxUsedY;
-        private System.Windows.Forms.Label LabelConversion2;
-        private System.Windows.Forms.Label LabelNormalY;
-        private System.Windows.Forms.Label LabelTableY;
-        private System.Windows.Forms.Label LabelUsedY;
-        private System.Windows.Forms.Button ButtonConvert;
-        private System.Windows.Forms.Button ButtonReset;
-        private System.Windows.Forms.TextBox TextboxChar;
-        private System.Windows.Forms.TextBox TextboxNumber;
-        private Panel ImagePanel;
-        private PictureBox PictureBoxImage;
-        private Button ButtonOpenFont;
-        private Label LabelFontName;
-        private CheckBox CheckboxAddX;
-        private TextBox TextboxFontSize;
-        private Label LabelFontSize;
-        private TextBox TextboxX;
-        private Label LabelX;
-    }
+		#endregion
+		private System.Windows.Forms.Button ButtonLoadPNG;
+		private System.Windows.Forms.Button ButtonLoadTXT;
+		private System.Windows.Forms.Button ButtonPrevious;
+		private System.Windows.Forms.Button ButtonNext;
+		private System.Windows.Forms.TextBox InfoTextbox;
+		private System.Windows.Forms.Button ButtonExtractAll;
+		private System.Windows.Forms.Button ButtonReplaceAll;
+		private System.Windows.Forms.Button ButtonSavePNG;
+		private System.Windows.Forms.Button ButtonSaveTXT;
+		private System.Windows.Forms.TextBox TextboxNormalY;
+		private System.Windows.Forms.Label LabelConversion1;
+		private System.Windows.Forms.TextBox TextboxTableY;
+		private System.Windows.Forms.TextBox TextboxUsedY;
+		private System.Windows.Forms.Label LabelConversion2;
+		private System.Windows.Forms.Label LabelNormalY;
+		private System.Windows.Forms.Label LabelTableY;
+		private System.Windows.Forms.Label LabelUsedY;
+		private System.Windows.Forms.Button ButtonConvert;
+		private System.Windows.Forms.Button ButtonReset;
+		private System.Windows.Forms.TextBox TextboxChar;
+		private System.Windows.Forms.TextBox TextboxNumber;
+		private Panel ImagePanel;
+		private PictureBox PictureBoxImage;
+		private Button ButtonOpenFont;
+		private Label LabelFontName;
+		private CheckBox CheckboxAddX;
+		private TextBox TextboxFontSize;
+		private Label LabelFontSize;
+		private TextBox TextboxX;
+		private Label LabelX;
+	}
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace V3UnityFontReader
 {
-    public partial class Form1
+    public partial class V3UnityFontReader
     {
         private int InterpretY(int y)
         {

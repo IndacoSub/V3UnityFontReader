@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace V3UnityFontReader
 {
-    public partial class Form1
+    public partial class V3UnityFontReader
     {
         // Ask input (https://stackoverflow.com/questions/97097/what-is-the-c-sharp-version-of-vb-nets-inputdialog)
         public static DialogResult ShowInputDialog(ref string input)

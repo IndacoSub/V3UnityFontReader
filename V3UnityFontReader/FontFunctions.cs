@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace V3UnityFontReader
 {
-    public partial class Form1
+    public partial class V3UnityFontReader
     {
         // TODO: Find a better name!
         private (int, int) AttemptNextXY(string character, int startX, int startY)
