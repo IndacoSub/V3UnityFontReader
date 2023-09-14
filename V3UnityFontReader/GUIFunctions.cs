@@ -68,10 +68,12 @@ namespace V3UnityFontReader
 
             if (fm.LoadedFont)
             {
+                MessageBox.Show("Font detected!");
                 LoadCustomFromFont(e.X, e.Y);
             }
             else
             {
+                MessageBox.Show("Font could not be detected!");
                 LoadCustomFromFiles(e.X, e.Y);
             }
         }

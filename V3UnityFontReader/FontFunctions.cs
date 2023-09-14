@@ -9,8 +9,14 @@ namespace V3UnityFontReader
         // TODO: Find a better name!
         private (int, int) AttemptNextXY(string character, int startX, int startY)
         {
-
-            Color c = Color.FromArgb(125, 255, 255, 255); // Black with reduced alpha?
+            const int alpha = 155;
+            Color white = Color.White;
+            Color black = Color.Black;
+            Color custom = Color.FromArgb(alpha, 255, 255, 255); // Black with reduced alpha?
+            Color v3std = Color.FromArgb(alpha, 0, 0, 0);
+            Color c = v3std;
+            c = Color.FromArgb(alpha, c.R, c.G, c.B);
+            // Is it normal that it's white?
             SolidBrush mybrush = new SolidBrush(c);
             PointF point = new PointF(startX, startY);
             StringFormat format = StringFormat.GenericTypographic;

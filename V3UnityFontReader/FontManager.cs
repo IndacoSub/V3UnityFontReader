@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
+using System.Windows.Forms;
 
 // Copied from "DGRV3TS" so not "native" to this application
 
@@ -46,72 +47,68 @@ namespace V3UnityFontReader
             FontName = DefaultFontName;
 
             // The ideal font would be FOT-HummingStd-D (I guess?)
-            if (File.Exists("font.otf"))
+            if (!File.Exists(init_font))
             {
-                CustomFonts.AddFontFile("font.otf");
-            }
-            else
-            {
-                if (File.Exists("font.ttf"))
-                {
-                    CustomFonts.AddFontFile("font.ttf");
-                }
-                else
-                {
-                    string file = init_font;
-                    if (File.Exists(file))
-                    {
-                        LoadCustomFont(file);
-                    }
-                }
+                return;
             }
 
-            if (CustomFonts.Families.Length > 0)
+            LoadedFont = LoadCustomFont(init_font);
+
+            if(!LoadedFont)
             {
-                LoadedFont = true;
+                return;
             }
 
-            if (LoadedFont)
+            if(CustomFonts.Families.Length <= 0)
             {
-                FontFamily[] fontFamilies = CustomFonts.Families;
+                return;
+            }
 
-                for (int j = 0, count = fontFamilies.Length; j < count; ++j)
-                {
-                    // Get the font family name.
-                    string familyName = fontFamilies[j].Name;
+            FontFamily[] fontFamilies = CustomFonts.Families;
 
-                    FontName = familyName;
+            for (int j = 0, count = fontFamilies.Length; j < count; ++j)
+            {
+                // Get the font family name.
+                string familyName = fontFamilies[j].Name;
 
-                    LoadRegular(fontFamilies[j], familyName);
+                FontName = familyName;
 
-                    LoadBold(fontFamilies[j], familyName);
+                LoadRegular(fontFamilies[j], familyName);
 
-                    LoadItalic(fontFamilies[j], familyName);
+                LoadBold(fontFamilies[j], familyName);
 
-                    LoadBoldItalic(fontFamilies[j], familyName);
+                LoadItalic(fontFamilies[j], familyName);
 
-                    LoadUnderline(fontFamilies[j], familyName);
+                LoadBoldItalic(fontFamilies[j], familyName);
 
-                    LoadStrikeout(fontFamilies[j], familyName);
-                }
+                LoadUnderline(fontFamilies[j], familyName);
+
+                LoadStrikeout(fontFamilies[j], familyName);
             }
         }
 
         public void LoadCurrentFont()
         {
-            CurrentFont = LoadedFont ? FontList[FirstFont] : new Font(DefaultFontName, FontSize);
+            CurrentFont = LoadedFont && FontList.Count > 0 ? FontList[FirstFont] : new Font(DefaultFontName, FontSize);
         }
 
-        public void LoadCustomFont(string filename)
+        public bool LoadCustomFont(string filename)
         {
             var file = filename;
-            if ((!file.Contains(".ttf") && !file.Contains(".otf")) || file.Length == 0)
+            bool valid_name = file.Length >= 1;
+            bool is_ttf = file.Contains(".ttf");
+            bool is_otf = file.Contains(".otf");
+            bool valid_font = valid_name && (is_otf || is_ttf);
+
+            if (valid_font)
+            {
+                CustomFonts.AddFontFile(file);
+                return true;
+            } else
             {
                 Debug.WriteLine("Could not load font!");
-                return;
+                return false;
             }
-
-            CustomFonts.AddFontFile(file);
         }
 
         public void LoadRegular(FontFamily ff, string fn)

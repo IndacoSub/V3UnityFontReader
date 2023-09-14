@@ -26,7 +26,14 @@ namespace V3UnityFontReader
             }
 
             string filename = save.FileName;
-            i.Save(filename);
+
+            if (filename == png_fn)
+            {
+                MessageBox.Show("You cannot replace the source file while the program is running and the file is open!");
+            } else
+            {
+                i.Save(filename);
+            }
         }
 
         private void SaveFontAsTXT()
