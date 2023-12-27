@@ -169,11 +169,13 @@ namespace V3UnityFontReader
                                         ", with index: " + character.m_GlyphIndex + ", len: " +
                                         font.m_UsedGlyphRects.Count + ", index: " + used_index);
                     }
-
-                    writetext.WriteLine("m_UsedGlyphRects.m_X = " + font.m_UsedGlyphRects[used_index].m_X);
-                    writetext.WriteLine("m_UsedGlyphRects.m_Y = " + font.m_UsedGlyphRects[used_index].m_Y);
-                    writetext.WriteLine("m_UsedGlyphRects.m_Width = " + font.m_UsedGlyphRects[used_index].m_Width);
-                    writetext.WriteLine("m_UsedGlyphRects.m_Height = " + font.m_UsedGlyphRects[used_index].m_Height);
+                    else
+                    {
+                        writetext.WriteLine("m_UsedGlyphRects.m_X = " + font.m_UsedGlyphRects[used_index].m_X);
+                        writetext.WriteLine("m_UsedGlyphRects.m_Y = " + font.m_UsedGlyphRects[used_index].m_Y);
+                        writetext.WriteLine("m_UsedGlyphRects.m_Width = " + font.m_UsedGlyphRects[used_index].m_Width);
+                        writetext.WriteLine("m_UsedGlyphRects.m_Height = " + font.m_UsedGlyphRects[used_index].m_Height);
+                    }
                 }
                 else
                 {

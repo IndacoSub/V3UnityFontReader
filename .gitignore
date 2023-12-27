@@ -19,3 +19,5 @@ V3UnityFontReader/bin/*
 *.editorconfig
 V3UnityFontReader/obj/*
 *.BuildWithSkipAnalyzers
+*.json
+*.bin

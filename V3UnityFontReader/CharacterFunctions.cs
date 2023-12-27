@@ -60,7 +60,11 @@ namespace V3UnityFontReader
 
             foreach (TMPCharacter ch in font.m_CharacterTable)
             {
-                int glyph_index = GetGlyphByIndex(ch.m_GlyphIndex);
+
+				// Useful for debugging
+                bool is_specific_char = false;
+
+				int glyph_index = GetGlyphByIndex(ch.m_GlyphIndex);
                 if (glyph_index == -1)
                 {
                     Debug.WriteLine("Couldn't find glyph!");
@@ -74,10 +78,14 @@ namespace V3UnityFontReader
                     continue;
                 }
 
-                bool is_inside_x = glyph.m_GlyphRect.m_X > myrect.m_X &&
-                                   glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width < myrect.m_X + myrect.m_Width;
-                bool is_inside_y = glyph.m_GlyphRect.m_Y > myrect.m_Y &&
-                                   glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height < myrect.m_Y + myrect.m_Height;
+                bool greater_x = glyph.m_GlyphRect.m_X > myrect.m_X;
+                bool weird_math_x = glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width < myrect.m_X + myrect.m_Width;
+				bool is_inside_x = greater_x &&
+                                   weird_math_x;
+                bool greater_y = glyph.m_GlyphRect.m_Y > myrect.m_Y;
+                bool weird_math_y = glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height < myrect.m_Y + myrect.m_Height;
+				bool is_inside_y = greater_y &&
+                                   weird_math_y;
 
                 if (is_inside_x && is_inside_y)
                 {
@@ -90,37 +98,60 @@ namespace V3UnityFontReader
                 const int DESIRED_URECT_X = 0;
                 const int DESIRED_URECT_Y = 0;
 
-                if (glyph.m_GlyphRect.m_X == DESIRED_GRECT_X && myrect.m_X == DESIRED_URECT_X &&
-                    myrect.m_Y == DESIRED_URECT_Y)
-                    if (!is_inside_x)
+                if (!is_inside_x && !is_inside_y && is_specific_char)
+                {
+                    //Debug.WriteLine("\"" + (char)ch.m_Unicode + "\" (" + ch.m_Unicode + "): It's not within X or Y!");
+                    if(!greater_x)
                     {
-                        Debug.WriteLine("Wrong X math!");
-                        Debug.WriteLine("glyph.m_GlyphRect.m_X (" + glyph.m_GlyphRect.m_X + ") > myrect.m_X (" +
-                                        myrect.m_X +
-                                        ")    &&    glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width (" +
-                                        glyph.m_GlyphRect.m_Width + ") < myrect.m_X + myrect.m_Width (" +
-                                        myrect.m_Width + ") = (" +
-                                        (glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width) + " VS " +
-                                        (myrect.m_X + myrect.m_Width) + ")"
-                        );
-                    }
-                    else
+						//Debug.WriteLine("glyph.m_GlyphRect.m_X (" + glyph.m_GlyphRect.m_X + ") > myrect.m_X (" + myrect.m_X + ")");
+					}
+					if (!weird_math_x)
                     {
-                        if (!is_inside_y)
+						//Debug.WriteLine("glyph.m_GlyphRect.m_X (" + glyph.m_GlyphRect.m_X + ") + glyph.m_GlyphRect.m_Width (" + glyph.m_GlyphRect.m_Width + ") < myrect.m_X (" + myrect.m_X + ") + myrect.m_Width (" + myrect.m_Width + ")");
+					}
+					if (!greater_y)
+                    {
+						//Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") > myrect.m_Y (" + myrect.m_Y + ")");
+					}
+					if (!weird_math_y)
+					{
+						//Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") + glyph.m_GlyphRect.m_Height (" + glyph.m_GlyphRect.m_Height + ") < myrect.m_Y (" + myrect.m_Y + ") + myrect.m_Height (" + myrect.m_Height + ")");
+					}
+				}
+                else
+                {
+                    if (glyph.m_GlyphRect.m_X == DESIRED_GRECT_X && myrect.m_X == DESIRED_URECT_X &&
+                        myrect.m_Y == DESIRED_URECT_Y)
+                        if (!is_inside_x)
                         {
-                            Debug.WriteLine("Wrong Y math!");
-                            Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") > myrect.m_Y (" +
-                                            myrect.m_Y + ")    &&    glyph.m_GlyphRect.m_Y (" +
-                                            glyph.m_GlyphRect.m_Y +
-                                            ") + glyph.m_GlyphRect.m_Height (" +
-                                            glyph.m_GlyphRect.m_Height + ") < myrect.m_Y (" + myrect.m_Y +
-                                            ") + myrect.m_Height (" + myrect.m_Height + ") = (" +
-                                            (glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height) + " VS " +
-                                            (myrect.m_Y + myrect.m_Height) + ")"
+                            Debug.WriteLine("Wrong X math!");
+                            Debug.WriteLine("glyph.m_GlyphRect.m_X (" + glyph.m_GlyphRect.m_X + ") > myrect.m_X (" +
+                                            myrect.m_X +
+                                            ")    &&    glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width (" +
+                                            glyph.m_GlyphRect.m_Width + ") < myrect.m_X + myrect.m_Width (" +
+                                            myrect.m_Width + ") = (" +
+                                            (glyph.m_GlyphRect.m_X + glyph.m_GlyphRect.m_Width) + " VS " +
+                                            (myrect.m_X + myrect.m_Width) + ")"
                             );
-                            //Debug.WriteLine("Suggestion?: myrect.m_Y could be: " + (glyph.m_GlyphRect.m_Y + (glyph.m_GlyphRect.m_Height / 2)));
                         }
-                    }
+                        else
+                        {
+                            if (!is_inside_y)
+                            {
+                                Debug.WriteLine("Wrong Y math!");
+                                Debug.WriteLine("glyph.m_GlyphRect.m_Y (" + glyph.m_GlyphRect.m_Y + ") > myrect.m_Y (" +
+                                                myrect.m_Y + ")    &&    glyph.m_GlyphRect.m_Y (" +
+                                                glyph.m_GlyphRect.m_Y +
+                                                ") + glyph.m_GlyphRect.m_Height (" +
+                                                glyph.m_GlyphRect.m_Height + ") < myrect.m_Y (" + myrect.m_Y +
+                                                ") + myrect.m_Height (" + myrect.m_Height + ") = (" +
+                                                (glyph.m_GlyphRect.m_Y + glyph.m_GlyphRect.m_Height) + " VS " +
+                                                (myrect.m_Y + myrect.m_Height) + ")"
+                                );
+                                //Debug.WriteLine("Suggestion?: myrect.m_Y could be: " + (glyph.m_GlyphRect.m_Y + (glyph.m_GlyphRect.m_Height / 2)));
+                            }
+                        }
+                }
 #endif
             }
 
